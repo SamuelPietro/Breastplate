@@ -1,0 +1,22 @@
+{
+    "name": "samuel-pietro/pframe",
+    "description": "Um framework PHP usando o padrão MVC",
+    "type": "project",
+    "license": "GPL-3.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "App\\": "App/",
+            "Core\\": "Core/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Samuel Pietro",
+            "email": "samuel@pietro.dev.br"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=8.0"
+    }
+}
