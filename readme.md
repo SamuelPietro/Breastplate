@@ -1,8 +1,8 @@
-# Pietro's Framework
+# PFrame
 
-## instalação
+## Instalação
 
-Clonar o repositorio e executar os comandos abaiaxo
+Clonar o repositório e executar os comandos abaixo
 
     composer dump-autoload -o
     php -S localhost:8000 -t public/
