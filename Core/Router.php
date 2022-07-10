@@ -63,8 +63,8 @@ class Router
             $url = filter_var($url, FILTER_SANITIZE_URL); // Filtrar a url de caracteres estranhos a uma url
             $url = explode('/', $url); // Criar um array com as aprtes da url: controller/action/params
 
-            $this->urlController = isset($url[0]) ? $url[0] : null; // Criando a $this->urlController com $url[0]
-            $this->urlAction = isset($url[1]) ? $url[1] : null; // Criando a $this->urlAction com $url[1]
+            $this->urlController = isset($url[0]) ? $url[0] : ''; // Criando a $this->urlController com $url[0]
+            $this->urlAction = isset($url[1]) ? $url[1] : ''; // Criando a $this->urlAction com $url[1]
 
             unset($url[0], $url[1]);// Limpar $url[0] e $url[1]
             $this->urlParams = array_values($url); // Criando a $this->urlParams com array_values($url)
