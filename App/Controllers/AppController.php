@@ -15,9 +15,9 @@ class AppController
     public function index()
     {
 
-        require VIEW . 'theme/header.phtml';
-        require VIEW . 'app.phtml';
+        require VIEW . 'theme/header.php';
+        require VIEW . 'app.php';
 
-        require VIEW . 'theme/footer.phtml';
+        require VIEW . 'theme/footer.php';
     }
 }

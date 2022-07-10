@@ -9,8 +9,8 @@ class ErrorController
     public function index($type, $return)
     {
         // load views
-        require VIEW . 'theme/header.phtml';
-        require VIEW . 'error/index.phtml';
-        require VIEW . 'theme/footer.phtml';
+        require VIEW . 'theme/header.php';
+        require VIEW . 'error/index.php';
+        require VIEW . 'theme/footer.php';
     }
 }
