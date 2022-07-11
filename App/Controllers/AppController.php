@@ -12,7 +12,7 @@ class AppController
 
     public function __construct()
     {
-        $this->model = new AppModel();
+        $this->model = new AppModel("table");
     }
     public function index(): void
     {

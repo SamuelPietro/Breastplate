@@ -5,8 +5,8 @@ namespace Core;
 class Router
 {
     // Propriedades relativas a url
-    private mixed $urlController;
-    private mixed $urlAction;
+    private $urlController = "";
+    private $urlAction;
     private $urlParams = array();
 
     public function __construct()
