@@ -6,7 +6,7 @@ namespace Core;
 
 class ErrorController
 {
-    public function index($type, $return)
+    public function index($type, $return): void
     {
         // load views
         require VIEW . 'theme/header.php';

@@ -18,8 +18,6 @@ require_once ROOT . 'vendor/autoload.php';
 // Carregar as configurações da aplicação (error reporting etc.)
 require_once CORE . 'config.php';
 
-// Carregar a classe Router
-use Core\Router;
 
 // Iniciar a aplicação através do Router
-$router = new Router();
+new Router();

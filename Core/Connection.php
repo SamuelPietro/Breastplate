@@ -27,7 +27,7 @@ class Connection
     /**
      * Abrir a conexão com o banco de dados comm as credenciais de Core/config.php
      */
-    protected function openDb()
+    protected function openDb(): void
     {
         // Configurar (opcional) as opções para a conexão PDO. Neste caso, Nós configuramos o fetch mode para
         // "objects", o que significa que todos os resultados serão objetos, como este: $result->user_name !
@@ -41,7 +41,7 @@ class Connection
         try {
             $this->pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
         } catch (PDOException $e) {
-            echo '<div align="center"><b>Mensagem: </b>' . $e->getMessage();
+            echo '<div><b>Mensagem: </b>' . $e->getMessage();
                     echo '<br><b>Código</b>: ' . $e->getCode() . '<br>';
                     echo '<b>Arquivo</b>: ' . $e->getFile();
             echo '<br><b>Linha: </b>' . $e->getLine();

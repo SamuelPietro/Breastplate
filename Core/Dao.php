@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Core;
 
+use PDOException;
+
 class Dao extends Connection
 {
-    private $table = '';
+    private string $table;
     public $pdo = null;
 
     public function __construct($table)
@@ -33,8 +35,7 @@ class Dao extends Connection
     {
         $sql = 'SELECT * FROM ' . $this->table . ' LIMIT 1';
         $sth = $this->pdo->query($sql);
-        $num_campos = $sth->columnCount();
-        return $num_campos;
+        return $sth->columnCount();
     }
 
     // Nome da coluna pelo número $x
@@ -43,12 +44,11 @@ class Dao extends Connection
         $sql = 'SELECT * FROM ' . $this->table . ' LIMIT 1';
         $sth = $this->pdo->query($sql);
         $meta = $sth->getColumnMeta($x);
-        $field = $meta['name'];
-        return $field;
+        return $meta['name'];
     }
 
     // Nome de todas colunas
-    public function allColumns()
+    public function allColumns(): array
     {
         $fld = '';
         for ($x = 1; $x < $this->columnCount(); $x++) {
@@ -59,8 +59,7 @@ class Dao extends Connection
                 $fld .= $field;
             }
         }
-        $fld = explode(',', $fld);
-        return $fld;
+        return explode(',', $fld);
     }
 
     // Recuperar todos os registros

@@ -5,8 +5,8 @@ namespace Core;
 class Router
 {
     // Propriedades relativas a url
-    private $urlController = '';
-    private $urlAction = '';
+    private mixed $urlController;
+    private mixed $urlAction;
     private $urlParams = array();
 
     public function __construct()
@@ -42,19 +42,19 @@ class Router
                     // Caso o action url não tenha comprimento zero e não exista, dispare o ErrorController com o parâmetro 1 - action
                 } else {
                     $return = $this->urlAction;
-                    $page = new \Core\ErrorController();
+                    $page = new ErrorController();
                     $page->index(1, $return); // 1 - action , 2 - controller
                 }
             }
             // Caso o controller na url não exista, dispare o ErrorController com o parâmetro 2 - controller
         } else {
             $return = $this->urlController;
-            $page = new \Core\ErrorController();
+            $page = new ErrorController();
             $page->index(2, $return);
         }
     }
 
-    private function splitUrl()
+    private function splitUrl(): void
     {
         // Verificar se a url foi setada
         if (isset($_GET['url'])) {
@@ -63,8 +63,8 @@ class Router
             $url = filter_var($url, FILTER_SANITIZE_URL); // Filtrar a url de caracteres estranhos a uma url
             $url = explode('/', $url); // Criar um array com as aprtes da url: controller/action/params
 
-            $this->urlController = isset($url[0]) ? $url[0] : ''; // Criando a $this->urlController com $url[0]
-            $this->urlAction = isset($url[1]) ? $url[1] : ''; // Criando a $this->urlAction com $url[1]
+            $this->urlController = $url[0] ?? ''; // Criando a $this->urlController com $url[0]
+            $this->urlAction = $url[1] ?? ''; // Criando a $this->urlAction com $url[1]
 
             unset($url[0], $url[1]);// Limpar $url[0] e $url[1]
             $this->urlParams = array_values($url); // Criando a $this->urlParams com array_values($url)

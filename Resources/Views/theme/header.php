@@ -13,12 +13,12 @@
     <meta name="language" content="Portuguese">
     <meta name="revisit-after" content="7 days">
     <meta name="author" content="<?php echo APP_AUTHOR; ?>">
-    <link rel="icon" type="image/x-icon" href="https://pietro.dev.br/images/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="<?php echo URL; ?>images/favicon.ico" />
     <title><?php echo APP_NAME; ?></title>
     <!-- Styles -->
-    <link rel="stylesheet" href="https://pietro.dev.br/css/style.css">
+    <link rel="stylesheet" href="<?php echo URL; ?>css/style.css">
     <!-- Scripts -->
-    <script src="https://pietro.dev.br/js/script.js" defer></script>
+    <script src="<?php echo URL; ?>js/script.js" defer></script>
 
 
 </head>

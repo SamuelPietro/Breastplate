@@ -8,8 +8,11 @@ use Core\Dao;
 
 class AppModel extends Dao
 {
-    public function __construct()
+    private string $table;
+
+    public function __construct($table)
     {
-        $this->dao = new Dao('clientes');
+        $this->table = $table;
+        parent::__construct($this->table);
     }
 }

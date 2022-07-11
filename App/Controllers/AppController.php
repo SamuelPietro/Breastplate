@@ -8,11 +8,13 @@ use App\Models\AppModel;
 
 class AppController
 {
+    private AppModel $model;
+
     public function __construct()
     {
         $this->model = new AppModel();
     }
-    public function index()
+    public function index(): void
     {
 
         require VIEW . 'theme/header.php';
