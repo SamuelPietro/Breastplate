@@ -39,7 +39,7 @@ Ao usar o pFrame, você pode criar aplicações PHP rapidamente e de maneira org
 Refatoramos todo o nucleo do aplicação para que as boas praticas e clean code seja seguidos fielmente.
 
 ## Documentação
-A documentação do pFrame ainda está sendo desenvolvida e está disponível na doriretorio docs. Aqui você encontrará informações detalhadas sobre como usar o framework, suas funcionalidades e como contribuir para o projeto.
+A documentação do pFrame ainda está sendo desenvolvida e está disponível na diretorio docs. Nela você encontrará informações detalhadas sobre como usar o framework, suas funcionalidades e como contribuir para o projeto.
 
 ## Autores
 
