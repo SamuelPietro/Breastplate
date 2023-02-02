@@ -1,4 +1,4 @@
-# pFrame 2.0 - Framework de Início Rápido para Desenvolvimento Vanilla
+# pFrame - Framework de Início Rápido para Desenvolvimento Vanilla
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
 ![](https://img.shields.io/github/tag/SamuelPietro/pframe)
 ![](https://img.shields.io/github/release/SamuelPietro/pframe)

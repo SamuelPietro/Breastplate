@@ -7,9 +7,24 @@ use PDOException;
 
 class Connection
 {
+    /**
+     * @var PDO|null
+     */
     private static $instance = null;
-    private PDO $pdo;
 
+    /**
+     * @var PDO
+     */
+    private $pdo;
+
+    /**
+     * Connection constructor.
+     *
+     * Creates a new PDO instance using the provided database connection details.
+     * Throws a PDOException if there's a problem connecting to the database.
+     *
+     * @throws PDOException
+     */
     protected function __construct()
     {
         $host = $_ENV['DB_HOST'];
@@ -31,6 +46,12 @@ class Connection
         }
     }
 
+    /**
+     * Get a single instance of the PDO object for the database connection.
+     *
+     * @return PDO
+     * @throws PDOException
+     */
     public static function getInstance(): PDO
     {
         if (self::$instance === null) {
