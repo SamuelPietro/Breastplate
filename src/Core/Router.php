@@ -47,16 +47,20 @@ class Router {
     {
         // Loop through all the routes
         foreach ($this->routes as $route) {
+            // Replace any URL parameters in the route path with regular expressions
+            $routePath = preg_replace('/{(\w+)}/', '(\w+)', $route['path']);
             // If the current route matches the incoming request
-            if ($route['method'] == $method && $route['path'] == $path) {
+            if (preg_match("#^$routePath$#", $path, $matches) && $route['method'] == $method) {
                 // Build the fully-qualified class name for the Controller
                 $controllerClass = "App\Controllers\\" . $route['controller'];
                 // Instantiate the Controller
                 $controller = new $controllerClass();
                 // Get the name of the action to trigger
                 $action = $route['action'];
-                // Call the action on the Controller
-                $controller->$action();
+                // Remove the first match (the entire path) from the matches array
+                array_shift($matches);
+                // Pass the URL parameters to the action as arguments
+                call_user_func_array(array($controller, $action), $matches);
                 return;
             }
         }
