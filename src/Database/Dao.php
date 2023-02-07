@@ -11,7 +11,7 @@ class Dao extends Connection
     /**
      * @var PDO
      */
-    protected $db;
+    protected PDO $db;
 
     public function __construct()
     {
@@ -159,10 +159,10 @@ class Dao extends Connection
     /**
      * Deletes a record from the current table based on the primary key
      *
-     * @param mixed $id The value of the primary key of the record to be deleted
+     * @param int $id The value of the primary key of the record to be deleted
      * @return bool True on success, false otherwise
      */
-    public function remove(mixed $id): bool
+    public function remove(int $id): bool
     {
         $pk = $this->getPrimaryKey();
         $stmt = $this->db->prepare("DELETE FROM $this->table WHERE $pk = ?");
@@ -179,7 +179,7 @@ class Dao extends Connection
     public function deleteByPk(mixed $id): bool
     {
         $pk = $this->getPrimaryKey();
-        $sql = "DELETE FROM {$this->table} WHERE $pk = :field_id";
+        $sql = "DELETE FROM $this->table WHERE $pk = :field_id";
         $query = $this->db->prepare($sql);
         return $query->execute(['field_id' => $id]);
     }
@@ -192,7 +192,7 @@ class Dao extends Connection
     public function countRecords(): int
     {
         $pk = $this->getPrimaryKey();
-        $sql = "SELECT COUNT($pk) AS total FROM {$this->table}";
+        $sql = "SELECT COUNT($pk) AS total FROM $this->table";
         $query = $this->db->prepare($sql);
         $query->execute();
         return (int)$query->fetch()->total;

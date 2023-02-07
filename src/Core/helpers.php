@@ -12,7 +12,7 @@ use JetBrains\PhpStorm\NoReturn;
  */
 #[NoReturn] function redirect(string $url): void
 {
-    header("Location: {$url}");
+    header("Location: $url");
     exit;
 }
 
@@ -91,11 +91,12 @@ function cookie(string $key, mixed $default = null): mixed
  * @param string $key
  * @param mixed $value
  * @param int $expire
+ * @param string $domain
  * @return void
  */
-function setCookie(string $key, mixed $value, int $expire = 0): void
+function setCookie(string $key, mixed $value, int $expire = 0, string $domain = '/'): void
 {
-    setcookie($key, $value, $expire, '/');
+    setcookie($key, $value, $expire, $domain);
 }
 
 /**
@@ -106,5 +107,5 @@ function setCookie(string $key, mixed $value, int $expire = 0): void
  */
 function removeCookie(string $key): void
 {
-    setcookie($key, '', time() - 3600, '/');
+    setcookie($key, '', time() - 3600);
 }

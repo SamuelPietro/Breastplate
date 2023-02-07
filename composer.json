@@ -1,6 +1,6 @@
 {
     "name": "samuel-pietro/pframe",
-    "description": "Um framework PHP usando o padrão MVC",
+    "description": "Quick Start Framework for Free Development",
     "type": "project",
     "license": "GPL-3.0-or-later",
     "autoload": {

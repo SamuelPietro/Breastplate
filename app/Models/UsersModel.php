@@ -61,6 +61,6 @@ class UsersModel extends Dao
      */
     public function delete(int $id)
     {
-        $this->remove(['id' => $id]);
+        $this->remove($id);
     }
 }

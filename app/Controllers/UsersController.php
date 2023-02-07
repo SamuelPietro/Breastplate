@@ -118,10 +118,10 @@ class UsersController
     /**
      * Deletes a user.
      *
-     * @param array $id
+     * @param int $id
      * @return void
      */
-    public function delete($id): void
+    public function delete(int $id): void
     {
         $this->model->remove($id);
         header("Location: /users");

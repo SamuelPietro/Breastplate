@@ -50,7 +50,7 @@ define('BASE_URL', getenv('BASE_URL'));
 /**
  * Defines the VIEWS_PATH constant
  *
- * VIEWS_PATH is a constant that holds the path to the views directory.
+ * VIEWS_PATH is a constant that holds the path to the view's directory.
  */
 const VIEWS_PATH =  __DIR__ . '/../../app/Views/';
 

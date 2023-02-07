@@ -1,54 +1,53 @@
-# pFrame - Framework de Início Rápido para Desenvolvimento Livre
+# pFrame - Quick Start Framework for Free Development
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
 ![](https://img.shields.io/github/tag/SamuelPietro/pframe)
 ![](https://img.shields.io/github/release/SamuelPietro/pframe)
 ![](https://img.shields.io/github/issues/SamuelPietro/pframe)
 
 
-pFrame é um framework de início rápido para desenvolvimento PHP com base em boas práticas e no padrão MVC. Com ele, você pode criar aplicações PHP usando código puro da linguagem, sem precisar se preocupar com as configurações iniciais e outros aspectos desnecessários.
+pFrame is a quickstart framework for PHP development based on best practices and the MVC pattern. With it, you can create PHP applications using pure language code, without having to worry about initial configurations and other unnecessary aspects.
+## Installation
+To install pFrame, simply clone the Github repository and follow the setup instructions.
 
-## Instalação
-Para instalar o pFrame, basta clonar o repositório do Github e seguir as instruções de configuração.
+     git clone https://github.com/SamuelPietro/pframe.git
+     # In your terminal run
+     composer install
+     php -S localhost:8000 -t public/
 
-    git clone https://github.com/SamuelPietro/pframe.git
-    # Em seu terminal execute
-    composer install
-    php -S localhost:8000 -t public/
+## Environment variables
 
-## Variáveis de Ambiente
+To run this project, you may need to update some environment variables in your .env based on your development environment
 
-Para rodar esse projeto, pode ser necessário atualizar algumas variáveis de ambiente no seu .env baseado em seu ambiente de desenvolvimento
+Now just access the application in your browser using http://localhost:8000
 
-Agora basta acessar a aplicação em seu navegador usando http://localhost:8000
+##
+pFrame uses the following third-party libraries through composer:
 
-## 
-pFrame utiliza as seguintes bibliotecas de terceiros através do composer:
-
-- filp/whoops (Para depuração de codigo)
-- symfony/dotenv 
+- filp/whoops (For code debugging)
+- symfony/dotenv
 - symfony/cache
 
-Estas bibliotecas são necessárias para o funcionamento do framework e serão instaladas automaticamente durante o processo de instalação do pFrame.
+These libraries are necessary for the framework to work and will be installed automatically during the pFrame installation process.
 
-## Uso
-Ao usar o pFrame, você pode criar aplicações PHP rapidamente e de maneira organizada, seguindo o padrão MVC. Isso significa que você pode separar suas views, controllers e models de maneira clara e fácil de manter.
+## Usage
+By using pFrame, you can quickly and neatly create PHP applications following the MVC pattern. This means you can separate your views, controllers and models in a clean and maintainable way.
 
 
-## Melhorias
+## Improvements
 
-Refatoramos todo o nucleo do aplicação para que as boas praticas e clean code seja seguidos fielmente.
+We refactored the entire core of the application so that good practices and clean code are faithfully followed.
 
-## Documentação
-A documentação do pFrame ainda está sendo desenvolvida e está disponível na diretorio docs. Nela você encontrará informações detalhadas sobre como usar o framework, suas funcionalidades e como contribuir para o projeto.
+## Documentation
+The pFrame documentation is still being developed and is available in the doc's directory. In it, you will find detailed information about how to use the framework, its functionalities and how to contribute to the project.
 
-## Autores
+## Authors
 
 - [@samuelpietro](https://www.github.com/samuelpietro)
 
-## Contribuições
-Todas as contribuições são bem-vindas! Se você encontrar bugs, gostaria de sugerir novos recursos ou tem alguma outra ideia para melhorar o pFrame, basta abrir uma issue no Github.
+## Contributions
+All contributions are welcome! If you find bugs, would like to suggest new features, or have any other ideas to improve pFrame, just open an issue on GitHub.
 
 
-## Feedback
+## feedback
 
-Se você tiver algum feedback, por favor nos deixe saber por meio de samuel@pietro.dev.br
+If you have any feedback, please let us know at samuel@pietro.dev.br

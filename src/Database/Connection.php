@@ -15,7 +15,7 @@ class Connection
     /**
      * @var PDO
      */
-    private $pdo;
+    private PDO $pdo;
 
     /**
      * Connection constructor.

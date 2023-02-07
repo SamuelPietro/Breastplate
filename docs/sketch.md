@@ -1,37 +1,37 @@
-### Estrutura do projeto
+### Project structure
 
-+ "app": É a pasta principal para o aplicativo.
-    + "Controllers": Armazena todos os controladores, que são responsáveis por lidar com as solicitações de usuários e gerenciar a interação com o modelo.
-    + "Models": Armazena todos os modelos, que são responsáveis por gerenciar dados e realizar tarefas relacionadas ao banco de dados.
-    + "Views": Armazena todas as visualizações, que são responsáveis por exibir os dados para o usuário.
-        + "templates": Armazena os arquivos de layout da aplicação.
-+ "docs": Armazena a documentação do projeto. Isso inclui manuais, guias de usuário, diagramas de arquitetura, notas de lançamento, entre outros tipos de documentação relacionados ao projeto.
-+ "public": É a pasta pública, acessível ao usuário final. Armazena arquivos CSS, imagens e JavaScript que são acessíveis via navegador.
-    + "index.php": É o ponto de entrada principal para o aplicativo.
-+ "src": Contém o código fonte do aplicativo.
-    + "Core": Contém o núcleo do aplicativo, que é responsável por gerenciar a lógica de negócios e outros componentes importantes.
-        + "bootstrap.php": Contém código que inicializa e configura o aplicativo.
-        + "Autoloader.php": Faz o autoloader de classes.
-        + "helpers.php": Conter funções auxiliares úteis que podem ser usadas em toda a aplicação, como funções para tratar strings, formatar datas, etc.
-        + "Router.php": Classe que implementa as funcionalidades de roteamento, como adicionar rotas, corresponder rotas a URLs específicas e redirecionar o usuário para o controlador adequado.
-        + "routes.php": Este arquivo é responsável por definir as rotas da aplicação. Ele contém as chamadas para os métodos da classe Router que adicionam as rotas ao sistema de roteamento.
-    + "Database": Contém código relacionado ao banco de dados, incluindo scripts de criação de tabelas e consultas SQL.
-        + "Connection.php" : Faz a conexão com o banco de dados usando as informações do arquivo .env.
-        + "Dao.php": É responsável por fornecer uma camada de abstração para acessar os dados armazenados no banco de dados. 
-+ "tests": Armazena testes automatizados para o aplicativo.
-+ "vendor": Armazena dependências externas instaladas com o Composer.
-+ "composer.json": Contém informações sobre as dependências do aplicativo e outras configurações do Composer.
-+ "composer.lock": Armazena informações sobre as versões exatas das dependências instaladas.
-+ ".env": Armazena dados sensiveis e pessoais para execução do projeto
++ "app": It is the main folder for the application.
+    + "Controllers": Stores all controllers, which are responsible for handling user requests and managing interaction with the model.
+    + "Models": Stores all models, which are responsible for managing data and performing tasks related to the database.
+    + "Views": Stores all views, which are responsible for displaying data to the user.
+        + "templates": Stores the application's layout files.
++ "docs": Stores the project documentation. This includes manuals, user guides, architectural diagrams, release notes, and other types of project-related documentation.
++ "public": It is the public folder, accessible to the end user. Stores CSS files, images and JavaScript that are accessible via browser.
+    + "index.php": It is the main entry point for the application.
++ "src": Contains the source code of the application.
+    + "Core": Contains the core of the application, which is responsible for managing the business logic and other important components.
+        + "bootstrap.php": Contains code that initializes and configures the application.
+        + "Autoloader.php": Makes the class autoloader.
+        + "helpers.php": Contain useful helper functions that can be used throughout the application, such as functions for parsing strings, formatting dates, etc.
+        + "Router.php": Class that implements routing functionality, such as adding routes, matching routes to specific URLs, and redirecting the user to the appropriate controller.
+        + "routes.php": This file is responsible for defining the application's routes. It contains calls to the methods of the Router class that add routes to the routing system.
+    + "Database": Contains database-related code, including table creation scripts and SQL queries.
+        + "Connection.php" : Connects to the database using information from the .env file.
+        + "Dao.php": It is responsible for providing an abstraction layer to access the data stored in the database.
++ "tests": Stores automated tests for the application.
++ "vendor": Stores external dependencies installed with Composer.
++ "composer.json": Contains information about application dependencies and other Composer settings.
++ "composer.lock": Stores information about exact versions of installed dependencies.
++ ".env": Store sensitive and personal data for project execution
 
 
 
 ### Composer.json
-"name": Especifica o nome do pacote, no formato "usuário/nome    +do    +pacote".
-"description": Fornece uma descrição sucinta do projeto.
-"type": Especifica o tipo de projeto, neste caso "project".
-"license": Especifica a licença do projeto, neste caso "GPL    +3.0    +or    +later".
-"autoload": Especifica as configurações de autoload do Composer para o projeto, usando o padrão PSR    +4.
-"authors": Lista os autores do projeto, incluindo nome e e    +mail.
-"minimum    +stability": Especifica a estabilidade mínima aceitável para dependências do projeto. Neste caso, é "dev".
-"require": Lista as dependências do projeto, incluindo a versão mínima do PHP e as extensões PDO e JSON.
+"name": Specifies the package name, in the format "user/package+name".
+"description": Provides a brief description of the project.
+"type": Specifies the type of project, in this case "project".
+"license": Specifies the project's license, in this case "GPL +3.0 +or +later".
+"autoload": Specifies the Composer autoload settings for the project, using the default PSR +4.
+"authors": Lists the authors of the project, including name and e-mail.
+"minimum +stability": Specifies the minimum acceptable stability for project dependencies. In this case it is "dev".
+"require": Lists the project's dependencies, including the minimum PHP version and the PDO and JSON extensions.
