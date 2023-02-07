@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Models\UsersModel;
+use App\Views\View;
+use Exception;
 
 /**
  * Class UsersController
@@ -10,56 +12,73 @@ use App\Models\UsersModel;
  * @package App\Controllers
  *
  * This class is used to manage user operations such as getting all users, getting a user by id,
- * creating a user, updating a user and deleting a user.
+ * creating a user, updating a user, and deleting a user.
  */
 class UsersController
 {
     /**
      * @var UsersModel
+     * Holds an instance of the UsersModel class.
      */
     private UsersModel $model;
 
     /**
+     * @var View
+     * Holds an instance of the View class.
+     */
+    private View $view;
+
+    /**
      * UsersController constructor.
      *
-     * Creates a new instance of UsersModel.
+     * Creates a new instance of UsersModel and View.
      */
     public function __construct()
     {
+        $this->view = new View();
         $this->model = new UsersModel();
     }
 
     /**
-     * Get all users and include the 'users/index.php' view.
+     * Renders the list of users.
+     *
+     * @return void
+     * @throws Exception
      */
     public function index(): void
     {
         $users = $this->model->getAll();
-        include VIEWS_PATH . 'users/index.php';
+        $this->view->render('users/index', ['users' => $users]);
     }
 
     /**
-     * Get user by id and include the 'users/show.php' view.
+     * Renders the details of a user by id.
      *
-     * @param int $id The id of the user to get.
+     * @param int $id
+     * @return void
+     * @throws Exception
      */
     public function show(int $id): void
     {
         $user = $this->model->getById($id);
-        include VIEWS_PATH . 'users/show.php';
+        $this->view->render('users/show', ['user' => $user]);
     }
 
     /**
-     * Include the 'users/create.php' view.
+     * Renders the form for creating a new user.
+     *
+     * @return void
+     * @throws Exception
      */
     public function create(): void
     {
-        include VIEWS_PATH . 'users/create.php';
+        $this->view->render('users/create');
     }
 
     /**
-     * If the request method is POST, create a new user using the data from $_POST.
-     * Then redirect to the '/users' page.
+     * Store a new user.
+     *
+     * @return void
      */
     public function store(): void
     {
@@ -70,39 +89,41 @@ class UsersController
     }
 
     /**
-     * Get user by id and include the 'users/update.php' view.
+     * Renders the form for editing a user.
      *
-     * @param int $id The id of the user to get.
+     * @param int $id
+     * @return void
+     * @throws Exception
      */
     public function edit(int $id): void
     {
         $user = $this->model->getById($id);
-        include VIEWS_PATH . 'users/update.php';
+        $this->view->render('users/update', ['user' => $user]);
     }
 
     /**
-     * If the request method is POST, update the user with the specified id using the data from $_POST.
-     * Then redirect to the '/users' page.
+     * Updates a user.
      *
-     * @param array $id The id of the user to update.
+     * @param array $id
+     * @return void
      */
     public function update(array $id): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->model->update($id, $_POST);
+            $this->model->edit($id, $_POST);
             header("Location: /users");
         }
     }
 
     /**
-     * Delete the user with the specified id.
-     * Then redirect to the '/users' page.
+     * Deletes a user.
      *
-     * @param array $id The id of the user to delete.
+     * @param array $id
+     * @return void
      */
-    public function delete(array $id): void
+    public function delete($id): void
     {
-        $this->model->delete($id);
+        $this->model->remove($id);
         header("Location: /users");
     }
 }
