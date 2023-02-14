@@ -6,6 +6,7 @@ use App\Models\UsersModel;
 use App\Views\View;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
+use Src\Core\WebHelper;
 
 /**
  * Class UsersController
@@ -92,7 +93,7 @@ class UsersController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->model->create($_POST);
         }
-        header("Location: /users");
+        WebHelper::redirect('/users');
     }
 
     /**
@@ -120,7 +121,7 @@ class UsersController
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->model->edit($id, $_POST);
-            header("Location: /users");
+            WebHelper::redirect('/users');
         }
     }
 
@@ -133,6 +134,6 @@ class UsersController
     public function delete(int $id): void
     {
         $this->model->remove($id);
-        header("Location: /users");
+        WebHelper::redirect('/users');
     }
 }
