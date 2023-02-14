@@ -5,6 +5,7 @@ namespace App\Views;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\CacheItem;
 
 /**
  * Class View
@@ -20,31 +21,51 @@ class View
      */
     public function __construct()
     {
-        $this->cache = new FilesystemAdapter();
+        $this->cache = new FilesystemAdapter('', 3600);
     }
 
     /**
-     * Loads a template and returns its content.
+     * Loads one or more templates and returns their content.
      *
-     * @param string $templateName Name of the template file to load.
-     * @param array $request Array containing the variables that will be extracted and made available to the template.
-     * @return bool|string The content of the loaded template.
-     * @throws Exception|InvalidArgumentException if the template file does not exist.
+     * @param string[] $templateNames Names of the template files to load.
+     * @param array $request Array containing the variables that will be extracted and made available to the templates.
+     * @return string The content of the loaded templates.
+     * @throws Exception|InvalidArgumentException if any of the template files do not exist.
      */
-    public function load(string $templateName, array $request = []): bool|string
+    public function load(array $templateNames, array $request = []): string
     {
-        $key = md5($templateName . serialize($request));
+        $key = md5(serialize($templateNames) . serialize($request));
         $item = $this->cache->getItem($key);
         if (!$item->isHit()) {
-            $templatePath = VIEWS_PATH . "/$templateName.php";
-            if (!file_exists($templatePath)) {
-                throw new Exception("Template not found: $templatePath");
+            $headerPath = VIEWS_PATH . '/templates/header.php';
+            if (!file_exists($headerPath)) {
+                throw new Exception(sprintf('Header not found: %s', $headerPath));
+            }
+            ob_start();
+            include $headerPath;
+            $content = ob_get_clean();
+
+            foreach ($templateNames as $templateName) {
+                $templatePath = VIEWS_PATH . '/' . $templateName . '.php';
+                if (!file_exists($templatePath)) {
+                    throw new Exception(sprintf('Template not found: %s', $templatePath));
+                }
+
+                extract($request);
+                ob_start();
+                include $templatePath;
+                $content .= ob_get_clean();
             }
 
-            extract($request);
+            $footerPath = VIEWS_PATH . '/templates/footer.php';
+            if (!file_exists($footerPath)) {
+                throw new Exception(sprintf('Footer not found: %s', $footerPath));
+            }
             ob_start();
-            include $templatePath;
-            $item->set(ob_get_clean());
+            include $footerPath;
+            $content .= ob_get_clean();
+
+            $item->set($content);
             $this->cache->save($item);
         }
 
@@ -52,21 +73,19 @@ class View
     }
 
     /**
-     * Renders a template and displays its content.
+     * Renders one or more templates and displays their content.
      *
-     * @param string $templateName Name of the template file that will be rendered.
-     * @param array $data Array containing the variables that will be made available to the template.
+     * @param string[] $templateNames Names of the template files that will be rendered.
+     * @param array $data Array containing the variables that will be made available to the templates.
      * @throws Exception|InvalidArgumentException If an error occurs during execution.
      */
-    public function render(string $templateName, array $data = []): void
+    public function render(array $templateNames, array $data = []): void
     {
         try {
-            $content = $this->load($templateName, $data);
+            $content = $this->load($templateNames, $data);
             echo $content;
         } catch (Exception $e) {
-            // Handle the error as appropriate for your application.
-            // For example, you might display a custom error message or log the error.
-            echo "An error occurred: " . $e->getMessage();
+            echo sprintf('An error occurred: %s', $e->getMessage());
         }
     }
 }
