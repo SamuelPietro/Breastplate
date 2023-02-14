@@ -2,14 +2,21 @@
 
 namespace App\Models;
 
-use Src\Database\Dao;
+use PDO;
+use Src\Core\WebHelper;
+use Src\Database\Connection;
 
 
-class AppModel extends Dao
+class AppModel extends Connection
 {
-    /**
-     * Table name in the database
-     */
-    protected string $table = 'App';
+    private const TABLE = 'users';
+    private PDO $db;
+    private WebHelper $webHelper;
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->db = Connection::getInstance();
+        $this->webHelper = new WebHelper();
+    }
 }

@@ -2,9 +2,10 @@
 
 namespace App\Controllers;
 
-use App\Models\UsersModel;
+use App\Models\UserModel;
 use App\Views\View;
 use Exception;
+use JetBrains\PhpStorm\NoReturn;
 use Psr\Cache\InvalidArgumentException;
 use Src\Core\WebHelper;
 
@@ -19,10 +20,10 @@ use Src\Core\WebHelper;
 class UsersController
 {
     /**
-     * @var UsersModel
+     * @var UserModel
      * Holds an instance of the UsersModel class.
      */
-    private UsersModel $model;
+    private UserModel $model;
 
     /**
      * @var View
@@ -38,7 +39,7 @@ class UsersController
     public function __construct()
     {
         $this->view = new View();
-        $this->model = new UsersModel();
+        $this->model = new UserModel();
     }
 
     /**
@@ -50,8 +51,9 @@ class UsersController
      */
     public function index(): void
     {
+        $csrf = (new WebHelper)->getCsrfToken();
         $users = $this->model->getAll();
-        $data = ['users' => $users];
+        $data = ['users' => $users, 'csrf' => $csrf];
         $templateNames = ['users/index'];
         $this->view->render($templateNames, $data);
     }
@@ -79,16 +81,18 @@ class UsersController
      */
     public function create(): void
     {
+        $csrf = (new WebHelper)->getCsrfToken();
         $templateNames = ['users/create'];
-        $this->view->render($templateNames, []);
+        $this->view->render($templateNames, ['csrf' => $csrf]);
     }
 
     /**
      * Store a new user.
      *
      * @return void
+     * @throws Exception
      */
-    public function store(): void
+    #[NoReturn] public function store(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->model->create($_POST);
@@ -105,22 +109,24 @@ class UsersController
      */
     public function edit(int $id): void
     {
+        $csrf = (new WebHelper)->getCsrfToken();
         $user = $this->model->getById($id);
-        $data = ['user' => $user];
-        $templateNames = ['users/update'];
+        $data = ['user' => $user, 'csrf' => $csrf];
+        $templateNames = ['users/edit'];
         $this->view->render($templateNames, $data);
     }
 
     /**
      * Updates a user.
      *
-     * @param array $id
+     * @param int $id
      * @return void
+     * @throws Exception
      */
-    public function update(array $id): void
+    public function update(int $id): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->model->edit($id, $_POST);
+            $this->model->update($id, $_POST);
             WebHelper::redirect('/users');
         }
     }
@@ -130,10 +136,11 @@ class UsersController
      *
      * @param int $id
      * @return void
+     * @throws Exception
      */
-    public function delete(int $id): void
+    #[NoReturn] public function delete(int $id): void
     {
-        $this->model->remove($id);
+        $this->model->delete($id, $_POST);
         WebHelper::redirect('/users');
     }
 }

@@ -13,9 +13,13 @@
                     <td><?= $user['name'] ?></td>
                     <td><?= $user['email'] ?></td>
                     <td>
-                        <a href="/users/<?= $user['id'] ?>">Show </a>
-                        <a href="/users/edit/<?= $user['id'] ?>"> Update </a>
-                        <a href="/users/delete/<?= $user['id'] ?>"> Delete </a>
+                        
+                        <form method="post" action="/users/delete/<?= $user['id'] ?>">
+                            <a href="/users/show/<?= $user['id'] ?>"><button type="button">Show</button> </a>
+                            <a href="/users/edit/<?= $user['id'] ?>"><button type="button">Update</button>  </a>
+                            <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
+                            <button type="submit" value="Delete">Delete</button>
+                        </form>
                     </td>
                 </tr>
             <?php endforeach; ?>

@@ -15,6 +15,9 @@ use Whoops\Run;
 function init(): void
 {
     try {
+        // Start session
+        session_start();
+        
         // Load the project dependencies through Composer's autoloader
         require_once __DIR__ . '/../../vendor/autoload.php';
 

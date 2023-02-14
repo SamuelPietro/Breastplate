@@ -3,7 +3,6 @@
 namespace Src\Core;
 
 use Exception;
-use Src\Core\Router;
 
 /**
  * The main application class
@@ -34,16 +33,17 @@ class Routes
         $this->router->addRoute('GET', '/', 'AppController', 'index');
 
         $this->router->addRoute('GET', '/users', 'UsersController', 'index');
-        $this->router->addRoute('GET', '/users/{id}', 'UsersController', 'show');
+        $this->router->addRoute('GET', '/users/show/{id}', 'UsersController', 'show');
         $this->router->addRoute('GET', '/users/create', 'UsersController', 'create');
-        $this->router->addRoute('POST', '/users/create', 'UsersController', 'store');
+        $this->router->addRoute('POST', '/users/store', 'UsersController', 'store');
         $this->router->addRoute('GET', '/users/edit/{id}', 'UsersController', 'edit');
-        $this->router->addRoute('POST', '/users/edit/{id}', 'UsersController', 'update');
-        $this->router->addRoute('GET', '/users/delete/{id}', 'UsersController', 'delete');
+        $this->router->addRoute('POST', '/users/update/{id}', 'UsersController', 'update');
+        $this->router->addRoute('POST', '/users/delete/{id}', 'UsersController', 'delete');
     }
 
     /**
      * Runs the application
+     * @throws Exception
      */
     public function run(): void
     {
@@ -53,7 +53,7 @@ class Routes
         try {
             $this->router->route($method, $path);
         } catch (Exception $e) {
-            // do nothing
+            throw new Exception("Error getting routes: " . $e->getMessage());
         }
     }
 }
