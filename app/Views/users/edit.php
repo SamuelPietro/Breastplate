@@ -8,7 +8,7 @@
     <label for="email">Email:</label>
     <input type="text" name="email" id="email" value="<?= $user['email'] ?>">
 
-    <label for="pass">Pass:</label>
+    <label for="password">Pass:</label>
     <input type="password" name="password" id="password" value="<?= $user['password'] ?>">
 
     <input type="submit" value="Update">

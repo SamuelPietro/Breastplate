@@ -8,7 +8,7 @@
     <label for="email">Email:</label>
     <input type="text" name="email" id="email">
 
-    <label for="pass">Pass:</label>
+    <label for="password">Pass:</label>
     <input type="password" name="password" id="password">
     
     <input type="submit" value="Create">
