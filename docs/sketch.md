@@ -35,3 +35,16 @@
 "authors": Lists the authors of the project, including name and e-mail.
 "minimum +stability": Specifies the minimum acceptable stability for project dependencies. In this case it is "dev".
 "require": Lists the project's dependencies, including the minimum PHP version and the PDO and JSON extensions.
+
+
+### Pattern of new commits
+In order to standardize and scale code versioning, now all commits will be preceded by prefixes, which are
+
++ feat: a new feature that was added to the application
++ fix: the resolution of a bug
++ style: feature and update related to styling 
++ refactor: refactoring a specific section of the source code
++ test: everything related to testing
++ docs everything related to documentation
++ chore: regular code maintenance
+
