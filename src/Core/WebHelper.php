@@ -64,7 +64,18 @@ class WebHelper
     {
         $_SESSION[$key] = $value;
     }
-
+    /**
+     * Returns the value of a key stored in the $_SESSION variable.
+     *
+     * @param string $key The name of the key to retrieve.
+     * @param mixed|null $default The default value to be returned if the key is not found.
+     * @return mixed The value of the key in $_SESSION or the default value provided.
+     */
+    public function getSession(string $key, mixed $default = null): mixed
+    {
+        return $_SESSION[$key] ?? $default;
+    }
+    
     /**
      * Remove a value from $_SESSION
      *
@@ -129,5 +140,50 @@ class WebHelper
         }
         $csp = "default-src 'self'; script-src 'self' 'nonce-$nonce'; img-src *; base-uri 'self'; font-src 'self' data:; style-src 'self' 'unsafe-inline'; object-src 'none';";
         header('Content-Security-Policy: ' . $csp);
+    }
+
+    /**
+     * Verifies the CSRF token for the current request
+     *
+     * @param string $csrfToken The CSRF token to be verified
+     * @return bool True if the token is valid, false otherwise
+     */
+    /**
+     * Generates a CSRF token and saves it in the session
+     *
+     * @return string The generated token
+     * @throws Exception
+     */
+    public function getCsrfToken(): string
+    {
+        // Generate a random token
+        $token = bin2hex(random_bytes(32));
+
+        // Save the token in the session
+        $_SESSION['csrf_token'] = $token;
+
+        return $token;
+    }
+
+
+    /**
+     * Verifies the CSRF token for the current request
+     *
+     * @param string $csrfToken The CSRF token to be verified
+     * @return bool True if the token is valid, false otherwise
+     */
+    public function verifyCsrfToken(string $csrfToken): bool
+    {
+        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $csrfToken);
+    }
+
+    /**
+     * Checks if the current request method is the same as the given method.
+     *
+     * @param string $method The method to check (e.g. 'GET', 'POST', 'PUT', etc.)
+     * @return bool Returns `true` if the current request method is the same as the given method, and `false` otherwise.
+     */
+    public function isMethod(string $method): bool {
+        return $_SERVER['REQUEST_METHOD'] === strtoupper($method);
     }
 }
