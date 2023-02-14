@@ -19,13 +19,13 @@
     "require": {
         "php": ">=8.0",
         "ext-pdo": "*",
-        "ext-json": "*",
         "filp/whoops": "^2.14",
         "symfony/dotenv": "*",
         "symfony/cache": "6.3.x-dev"
     },
     "require-dev": {
-        "symfony/thanks": "^1.2@dev"
+        "symfony/thanks": "^1.2@dev",
+        "phpunit/phpunit": "10"
     },
     "config": {
         "allow-plugins": {
