@@ -106,7 +106,7 @@ class UsersController
     {
         $user = $this->model->getById($id);
         $data = ['user' => $user];
-        $templateNames = ['users/show'];
+        $templateNames = ['users/update'];
         $this->view->render($templateNames, $data);
     }
 
