@@ -1,66 +1,56 @@
 <?php
 
 use Src\Core\Autoloader;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Src\Core\Routes;
+use Src\Core\WebHelper;
 use Symfony\Component\Dotenv\Dotenv;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
 /**
- * Loads the project dependencies through Composer's autoloader
- */
-require_once __DIR__ . '/../../vendor/autoload.php';
-
-/**
- * Loads environment variables from the .env file
- */
-$dotenv = new Dotenv();
-$dotenv->load(__DIR__ . '/../../.env');
-
-/**
- * Registers Whoops error handler
+ * Initializes the application.
  *
- * Whoops is a PHP error handler that provides a pretty error page.
- * The error handler is added to the Whoops Run object and registered.
+ * @throws Exception If the application fails to initialize.
  */
-$whoops = new Run;
-$whoops->pushHandler(new PrettyPageHandler);
-$whoops->register();
+function init(): void
+{
+    try {
+        // Load the project dependencies through Composer's autoloader
+        require_once __DIR__ . '/../../vendor/autoload.php';
 
-/**
- * Creates a new instance of the FilesystemAdapter for caching purposes
- */
-$cache = new FilesystemAdapter();
+        // Load environment variables from the .env file
+        $dotenv = new Dotenv();
+        $dotenv->load(__DIR__ . '/../../.env');
 
-/**
- * Registers the Autoloader class
- *
- * The Autoloader class is responsible for loading the required classes for the application.
- */
-$autoloader = new Autoloader();
-$autoloader->register();
+        // Register Whoops error handler
+        $whoops = new Run;
+        $whoops->pushHandler(new PrettyPageHandler);
+        $whoops->register();
 
-/**
- * Defines the BASE_URL constant
- *
- * BASE_URL is loaded from the environment variables defined in the .env file.
- */
-define('BASE_URL', getenv('BASE_URL'));
+        // Register the Autoloader class
+        $autoloader = new Autoloader();
+        $autoloader->register();
 
-/**
- * Defines the VIEWS_PATH constant
- *
- * VIEWS_PATH is a constant that holds the path to the view's directory.
- */
-const VIEWS_PATH =  __DIR__ . '/../../app/Views/';
+        // Define the base URL constant
+        define('BASE_URL', getenv('BASE_URL'));
 
-/**
- * Loads the routes file
- */
-$rotas = 'routes.php';
-require $rotas;
+        // Define the views path constant
+        define("VIEWS_PATH", __DIR__ . '/../../app/Views/');
 
-/**
- * Loads the helpers file
- */
-require_once 'helpers.php';
+        // Load the routes file
+        $routes = new Routes();
+        $routes->run();
+
+        // Set the Content-Security-Policy header
+        WebHelper::set_csp_header();
+    } catch (Exception $e) {
+        error_log('Error initializing the application: ' . $e->getMessage());
+        throw $e;
+    }
+}
+
+try {
+    init();
+} catch (Exception $e) {
+    error_log('Error executing the application: ' . $e->getMessage());
+}
