@@ -35,7 +35,7 @@ By using pFrame, you can quickly and neatly create PHP applications following th
 
 ## Improvements
 
-We refactored the entire core of the application so that good practices and clean code are faithfully followed.
+Check [changelog](https://github.com/SamuelPietro/pframe/commits/master) for a list of all changes.
 
 ## Documentation
 The pFrame documentation is still being developed and is available in the doc's directory. In it, you will find detailed information about how to use the framework, its functionalities and how to contribute to the project.
