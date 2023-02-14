@@ -27,24 +27,25 @@
 
 
 ### Composer.json
-"name": Specifies the package name, in the format "user/package+name".
-"description": Provides a brief description of the project.
-"type": Specifies the type of project, in this case "project".
-"license": Specifies the project's license, in this case "GPL +3.0 +or +later".
-"autoload": Specifies the Composer autoload settings for the project, using the default PSR +4.
-"authors": Lists the authors of the project, including name and e-mail.
-"minimum +stability": Specifies the minimum acceptable stability for project dependencies. In this case it is "dev".
-"require": Lists the project's dependencies, including the minimum PHP version and the PDO and JSON extensions.
++ "name": Specifies the package name, in the format "user/package+name".
++ "description": Provides a brief description of the project.
++ "type": Specifies the type of project, in this case "project".
++ "license": Specifies the project's license, in this case "GPL +3.0 +or +later".
++ "autoload": Specifies the Composer autoload settings for the project, using the default PSR +4.
++ "authors": Lists the authors of the project, including name and e-mail.
++ "minimum +stability": Specifies the minimum acceptable stability for project dependencies. In this case it is "dev".
++ "require": Lists the project's dependencies, including the minimum PHP version and the PDO and JSON extensions.
++ "require-dev": Lists project dependencies during development.
 
 
 ### Pattern of new commits
 In order to standardize and scale code versioning, now all commits will be preceded by prefixes, which are
 
-+ feat: a new feature that was added to the application
-+ fix: the resolution of a bug
-+ style: feature and update related to styling 
-+ refactor: refactoring a specific section of the source code
-+ test: everything related to testing
-+ docs everything related to documentation
-+ chore: regular code maintenance
++ feat: A new feature that was added to the application
++ fix: The resolution of a bug
++ style: Feature and update related to styling 
++ refactor: Refactoring a specific section of the source code
++ test: Everything related to testing
++ docs: Everything related to documentation
++ chore: Regular code maintenance
 
