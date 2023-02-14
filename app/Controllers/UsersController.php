@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\UsersModel;
 use App\Views\View;
 use Exception;
+use Psr\Cache\InvalidArgumentException;
 
 /**
  * Class UsersController
@@ -44,11 +45,14 @@ class UsersController
      *
      * @return void
      * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function index(): void
     {
         $users = $this->model->getAll();
-        $this->view->render('users/index', ['users' => $users]);
+        $data = ['users' => $users];
+        $templateNames = ['users/index'];
+        $this->view->render($templateNames, $data);
     }
 
     /**
@@ -56,23 +60,26 @@ class UsersController
      *
      * @param int $id
      * @return void
-     * @throws Exception
+     * @throws Exception|InvalidArgumentException
      */
     public function show(int $id): void
     {
         $user = $this->model->getById($id);
-        $this->view->render('users/show', ['user' => $user]);
+        $data = ['user' => $user];
+        $templateNames = ['users/show'];
+        $this->view->render($templateNames, $data);
     }
 
     /**
      * Renders the form for creating a new user.
      *
      * @return void
-     * @throws Exception
+     * @throws Exception|InvalidArgumentException
      */
     public function create(): void
     {
-        $this->view->render('users/create');
+        $templateNames = ['users/create'];
+        $this->view->render($templateNames, []);
     }
 
     /**
@@ -93,12 +100,14 @@ class UsersController
      *
      * @param int $id
      * @return void
-     * @throws Exception
+     * @throws Exception|InvalidArgumentException
      */
     public function edit(int $id): void
     {
         $user = $this->model->getById($id);
-        $this->view->render('users/update', ['user' => $user]);
+        $data = ['user' => $user];
+        $templateNames = ['users/show'];
+        $this->view->render($templateNames, $data);
     }
 
     /**

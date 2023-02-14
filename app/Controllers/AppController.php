@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\AppModel;
 use App\Views\View;
 use Exception;
+use Psr\Cache\InvalidArgumentException;
 
 /**
  * Class UsersController
@@ -44,9 +45,15 @@ class AppController
      *
      * @return void
      * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function index(): void
     {
-        $this->view->render('app');
+        $data = [
+            'title' => 'PFrame',
+            'content' => '',
+        ];
+        $templateNames = ['app'];
+        $this->view->render($templateNames, $data);
     }
 }
