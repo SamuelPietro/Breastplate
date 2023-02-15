@@ -30,6 +30,7 @@ class UsersController
      * Holds an instance of the View class.
      */
     private View $view;
+    private AuthController $authController;
 
     /**
      * UsersController constructor.
@@ -38,8 +39,13 @@ class UsersController
      */
     public function __construct()
     {
+        $this->authController = new AuthController();
+        if (!$this->authController->isAuthenticated()) {
+            WebHelper::redirect('/login');
+        }
         $this->view = new View();
         $this->model = new UserModel();
+        
     }
 
     /**
@@ -68,9 +74,11 @@ class UsersController
     public function show(int $id): void
     {
         $user = $this->model->getById($id);
-        $data = ['user' => $user];
-        $templateNames = ['users/show'];
-        $this->view->render($templateNames, $data);
+        if (!$user) {
+            $this->view->render(['error/404']);
+            return;
+        }
+        $this->view->render(['users/show'], ['user' => $user]);
     }
 
     /**

@@ -39,6 +39,9 @@ class Routes
         $this->router->addRoute('GET', '/users/edit/{id}', 'UsersController', 'edit');
         $this->router->addRoute('POST', '/users/update/{id}', 'UsersController', 'update');
         $this->router->addRoute('POST', '/users/delete/{id}', 'UsersController', 'delete');
+        $this->router->addRoute('GET', '/login', 'AuthController', 'login');
+        $this->router->addRoute('POST', '/login', 'AuthController', 'login');
+        $this->router->addRoute('GET', '/logout', 'AuthController', 'logout');
     }
 
     /**
