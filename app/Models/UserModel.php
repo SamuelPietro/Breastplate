@@ -8,12 +8,18 @@ use PDOException;
 use Src\Core\WebHelper;
 use Src\Database\Connection;
 
+/**
+ * UserModel class.
+ */
 class UserModel extends Connection
 {
     private const TABLE = 'users';
     private PDO $db;
     private WebHelper $webHelper;
-
+    
+    /**
+     * Class constructor.
+     */
     public function __construct()
     {
         parent::__construct();

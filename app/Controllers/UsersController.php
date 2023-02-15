@@ -19,16 +19,7 @@ use Src\Core\WebHelper;
  */
 class UsersController
 {
-    /**
-     * @var UserModel
-     * Holds an instance of the UsersModel class.
-     */
-    private UserModel $model;
-
-    /**
-     * @var View
-     * Holds an instance of the View class.
-     */
+    private UserModel $userModel;
     private View $view;
     private AuthController $authController;
 
@@ -44,8 +35,7 @@ class UsersController
             WebHelper::redirect('/login');
         }
         $this->view = new View();
-        $this->model = new UserModel();
-        
+        $this->userModel = new UserModel();
     }
 
     /**
@@ -57,9 +47,9 @@ class UsersController
      */
     public function index(): void
     {
+        $users = $this->userModel->getAll();
         $csrf = (new WebHelper)->getCsrfToken();
-        $users = $this->model->getAll();
-        $data = ['users' => $users, 'csrf' => $csrf];
+        $data = compact('users', 'csrf');
         $templateNames = ['users/index'];
         $this->view->render($templateNames, $data);
     }
@@ -73,12 +63,12 @@ class UsersController
      */
     public function show(int $id): void
     {
-        $user = $this->model->getById($id);
+        $user = $this->userModel->getById($id);
         if (!$user) {
             $this->view->render(['error/404']);
             return;
         }
-        $this->view->render(['users/show'], ['user' => $user]);
+        $this->view->render(['users/show'], compact('user'));
     }
 
     /**
@@ -91,7 +81,7 @@ class UsersController
     {
         $csrf = (new WebHelper)->getCsrfToken();
         $templateNames = ['users/create'];
-        $this->view->render($templateNames, ['csrf' => $csrf]);
+        $this->view->render($templateNames, compact('csrf'));
     }
 
     /**
@@ -103,7 +93,7 @@ class UsersController
     #[NoReturn] public function store(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->model->create($_POST);
+            $this->userModel->create($_POST);
         }
         WebHelper::redirect('/users');
     }
@@ -118,8 +108,8 @@ class UsersController
     public function edit(int $id): void
     {
         $csrf = (new WebHelper)->getCsrfToken();
-        $user = $this->model->getById($id);
-        $data = ['user' => $user, 'csrf' => $csrf];
+        $user = $this->userModel->getById($id);
+        $data = compact('user', 'csrf');
         $templateNames = ['users/edit'];
         $this->view->render($templateNames, $data);
     }
@@ -134,7 +124,7 @@ class UsersController
     public function update(int $id): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->model->update($id, $_POST);
+            $this->userModel->update($id, $_POST);
             WebHelper::redirect('/users');
         }
     }
@@ -148,7 +138,7 @@ class UsersController
      */
     #[NoReturn] public function delete(int $id): void
     {
-        $this->model->delete($id, $_POST);
+        $this->userModel->delete($id, $_POST);
         WebHelper::redirect('/users');
     }
 }

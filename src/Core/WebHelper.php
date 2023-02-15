@@ -42,6 +42,18 @@ class WebHelper
     }
 
     /**
+     * Sign in if you haven't already.
+     *
+     * @return void
+     */
+    public static function startSession(): void
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+    
+    /**
      * Get the value of a given key from $_SESSION
      *
      * @param string $key

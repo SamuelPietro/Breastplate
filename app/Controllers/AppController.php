@@ -8,40 +8,28 @@ use Exception;
 use Psr\Cache\InvalidArgumentException;
 
 /**
- * Class UsersController
+ * Class AppController
  *
- * @package App\Controllers
- *
- * This class is used to manage user operations such as getting all users, getting a user by id,
- * creating a user, updating a user, and deleting a user.
+ * This class is used to manage application operations.
  */
 class AppController
 {
-    /**
-     * @var AppModel
-     * Holds an instance of the UsersModel class.
-     */
     private AppModel $model;
-
-    /**
-     * @var View
-     * Holds an instance of the View class.
-     */
     private View $view;
 
     /**
-     * UsersController constructor.
+     * AppController constructor.
      *
-     * Creates a new instance of UsersModel and View.
+     * Initializes the controller with an instance of AppModel and View.
      */
     public function __construct()
     {
-        $this->view = new View();
         $this->model = new AppModel();
+        $this->view = new View();
     }
 
     /**
-     * Renders the list of users.
+     * Renders the application home page.
      *
      * @return void
      * @throws Exception

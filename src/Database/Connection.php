@@ -5,17 +5,24 @@ namespace Src\Database;
 use PDO;
 use PDOException;
 
+/**
+ * A class for creating and managing database connections.
+ */
 class Connection
 {
     /**
-     * @var PDO|null
-     */
-    private static $instance = null;
-
-    /**
+     * The PDO instance.
+     *
      * @var PDO
      */
     private PDO $pdo;
+
+    /**
+     * The single instance of the Connection class.
+     *
+     * @var Connection|null
+     */
+    private static ?Connection $instance = null;
 
     /**
      * Connection constructor.
@@ -39,6 +46,7 @@ class Connection
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
+
         try {
             $this->pdo = new PDO($dsn, $user, $pass, $options);
         } catch (PDOException $e) {
@@ -57,6 +65,8 @@ class Connection
         if (self::$instance === null) {
             self::$instance = new self();
         }
+
         return self::$instance->pdo;
     }
 }
+
