@@ -2,7 +2,8 @@
 <p><a href="/users">Back to users list</a></p>
 <form action="/users/update/<?= $user['id'] ?>" method="post">
     <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
-    <label for="name">Name:</label>    
+
+    <label for="name">Name:</label>
     <input type="text" name="name" id="name" value="<?= $user['name'] ?>">
 
     <label for="email">Email:</label>

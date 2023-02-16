@@ -90,7 +90,7 @@ class Bootstrap
      */
     private static function setCSPHeader(): void
     {
-        WebHelper::set_csp_header();
+        WebHelper::setCspHeader();
     }
 }
 

@@ -5,7 +5,6 @@ namespace App\Views;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\Cache\CacheItem;
 
 /**
  * Class View
@@ -42,7 +41,7 @@ class View
                 throw new Exception(sprintf('Header not found: %s', $headerPath));
             }
             ob_start();
-            include $headerPath;
+            include_once $headerPath;
             $content = ob_get_clean();
 
             foreach ($templateNames as $templateName) {
@@ -53,7 +52,7 @@ class View
 
                 extract($request);
                 ob_start();
-                include $templatePath;
+                include_once $templatePath;
                 $content .= ob_get_clean();
             }
 
@@ -62,7 +61,7 @@ class View
                 throw new Exception(sprintf('Footer not found: %s', $footerPath));
             }
             ob_start();
-            include $footerPath;
+            include_once $footerPath;
             $content .= ob_get_clean();
 
             $item->set($content);

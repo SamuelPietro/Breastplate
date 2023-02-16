@@ -4,6 +4,7 @@ namespace Src\Core;
 
 use Exception;
 use JetBrains\PhpStorm\NoReturn;
+
 class WebHelper
 {
     /**
@@ -26,7 +27,8 @@ class WebHelper
      */
     public static function currentUrl(): string
     {
-        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http")
+            . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     }
 
     /**
@@ -143,14 +145,15 @@ class WebHelper
      * @throws Exception if a nonce cannot be generated for use in the content security policy.
      *
      */
-    public static function set_csp_header(): void
+    public static function setCspHeader(): void
     {
         try {
             $nonce = bin2hex(random_bytes(16));
         } catch (Exception $e) {
             throw new Exception('Unable to generate a nonce for the content security policy.', 0, $e);
         }
-        $csp = "default-src 'self'; script-src 'self' 'nonce-$nonce'; img-src *; base-uri 'self'; font-src 'self' data:; style-src 'self' 'unsafe-inline'; object-src 'none';";
+        $csp = "default-src 'self'; script-src 'self' 'nonce-$nonce'; img-src *; base-uri 'self';
+        font-src 'self' data:; style-src 'self' 'unsafe-inline'; object-src 'none';";
         header('Content-Security-Policy: ' . $csp);
     }
 
@@ -195,7 +198,8 @@ class WebHelper
      * @param string $method The method to check (e.g. 'GET', 'POST', 'PUT', etc.)
      * @return bool Returns `true` if the current request method is the same as the given method, and `false` otherwise.
      */
-    public function isMethod(string $method): bool {
+    public function isMethod(string $method): bool
+    {
         return $_SERVER['REQUEST_METHOD'] === strtoupper($method);
     }
 }
