@@ -5,7 +5,6 @@ namespace App\Controllers;
 use App\Models\UserModel;
 use App\Views\View;
 use Exception;
-use JetBrains\PhpStorm\NoReturn;
 use Psr\Cache\InvalidArgumentException;
 use Src\Core\WebHelper;
 
@@ -62,7 +61,7 @@ class AuthController
      *
      * @return void
      */
-    #[NoReturn] public function logout(): void
+    public function logout(): void
     {
         WebHelper::removeSession('user_id');
         WebHelper::redirect('/');

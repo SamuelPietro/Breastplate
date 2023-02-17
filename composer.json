@@ -25,7 +25,8 @@
     },
     "require-dev": {
         "symfony/thanks": "^1.2@dev",
-        "phpunit/phpunit": "10"
+        "phpunit/phpunit": "10",
+        "phpstan/phpstan": "1.10.x-dev"
     },
     "config": {
         "allow-plugins": {

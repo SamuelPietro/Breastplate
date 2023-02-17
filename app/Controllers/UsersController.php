@@ -5,7 +5,6 @@ namespace App\Controllers;
 use App\Models\UserModel;
 use App\Views\View;
 use Exception;
-use JetBrains\PhpStorm\NoReturn;
 use Psr\Cache\InvalidArgumentException;
 use Src\Core\WebHelper;
 
@@ -90,7 +89,7 @@ class UsersController
      * @return void
      * @throws Exception
      */
-    #[NoReturn] public function store(): void
+    public function store(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->userModel->create($_POST);
@@ -136,7 +135,7 @@ class UsersController
      * @return void
      * @throws Exception
      */
-    #[NoReturn] public function delete(int $id): void
+    public function delete(int $id): void
     {
         $this->userModel->delete($id, $_POST);
         WebHelper::redirect('/users');

@@ -3,8 +3,6 @@
 namespace Src\Core;
 
 use Exception;
-use JetBrains\PhpStorm\NoReturn;
-
 class WebHelper
 {
     /**
@@ -13,7 +11,6 @@ class WebHelper
      * @param string $url
      * @return void
      */
-    #[NoReturn]
     public static function redirect(string $url): void
     {
         header("Location: $url");
