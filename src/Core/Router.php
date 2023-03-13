@@ -4,6 +4,7 @@ namespace Src\Core;
 
 use Exception;
 
+
 /**
  * The Router class is responsible for handling the routes and dispatching them to the proper controllers and actions.
  */
@@ -22,18 +23,20 @@ class Router
      * @param string $method      The HTTP method for this route, for example "GET" or "POST".
      * @param string $path        The URL path for this route.
      * @param string $controller  The name of the Controller class that this route should trigger.
-     * @param string $action      The name of the action (method) in the Controller class that this route should trigger.
+     * @param string $action      The name of the action (method) in the Controller class that this
+     * route should trigger.
      *
      * @return void
      */
     public function addRoute(string $method, string $path, string $controller, string $action): void
     {
+        $webHelper = new WebHelper();
         // Add the route to the routes array
         $this->routes[] = [
             'method' => $method,
             'path' => $path,
-            'controller' => $this->toStudlyCaps($controller),
-            'action' => $this->toCamelCase($action),
+            'controller' => $webHelper->toStudlyCaps($controller),
+            'action' => $webHelper->toCamelCase($action),
         ];
     }
 
@@ -61,30 +64,10 @@ class Router
             }
         }
 
-        throw new Exception("Route not found: $method $path");
-    }
-
-    /**
-     * Transforms a string to camelCase format.
-     *
-     * @param string $string  The input string.
-     *
-     * @return string The input string transformed to camelCase format.
-     */
-    private function toCamelCase(string $string): string
-    {
-        return lcfirst($this->toStudlyCaps($string));
-    }
-
-    /**
-     * Transforms a string to StudlyCaps format.
-     *
-     * @param string $string  The input string.
-     *
-     * @return string The input string transformed to StudlyCaps format.
-     */
-    private function toStudlyCaps(string $string): string
-    {
-        return str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
+        // Wildcard route - runs the default controller and default action
+        $controllerClass = "App\Controllers\\AppController";
+        $controller = new $controllerClass();
+        $action = 'notFound';
+        call_user_func_array([$controller, $action], []);
     }
 }
