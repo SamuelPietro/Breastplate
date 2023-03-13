@@ -6,6 +6,8 @@ use Exception;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
+use function ob_get_clean;
+
 /**
  * Class View
  *
@@ -15,12 +17,9 @@ class View
 {
     private FilesystemAdapter $cache;
 
-    /**
-     * View constructor.
-     */
     public function __construct()
     {
-        $this->cache = new FilesystemAdapter('', 3600);
+        $this->cache = new FilesystemAdapter();
     }
 
     /**
@@ -33,42 +32,46 @@ class View
      */
     public function load(array $templateNames, array $request = []): string
     {
-        $key = md5(serialize($templateNames) . serialize($request));
-        $item = $this->cache->getItem($key);
-        if (!$item->isHit()) {
-            $headerPath = VIEWS_PATH . '/templates/header.php';
-            if (!file_exists($headerPath)) {
-                throw new Exception(sprintf('Header not found: %s', $headerPath));
+        $content = '';
+        $headerPath = VIEWS_PATH . '/templates/header.php';
+
+        if (!file_exists($headerPath)) {
+            error_log(gettext('Header not found: ') . $headerPath);
+        }
+
+        ob_start();
+        include_once $headerPath;
+        $content .= ob_get_clean();
+
+        foreach ($templateNames as $templateName) {
+            $templatePath = VIEWS_PATH . '/' . $templateName . '.php';
+            if (!file_exists($templatePath)) {
+                error_log(gettext('Template not found: ') . $templatePath);
             }
-            ob_start();
-            include_once $headerPath;
-            $content = ob_get_clean();
 
-            foreach ($templateNames as $templateName) {
-                $templatePath = VIEWS_PATH . '/' . $templateName . '.php';
-                if (!file_exists($templatePath)) {
-                    throw new Exception(sprintf('Template not found: %s', $templatePath));
-                }
-
+            $cacheKey = md5($templateName . serialize($request));
+            $cachedContent = $this->cache->getItem($cacheKey);
+            if (!$cachedContent->isHit()) {
                 extract($request);
                 ob_start();
                 include_once $templatePath;
-                $content .= ob_get_clean();
+                $cachedContent->set(ob_get_clean());
+                $this->cache->save($cachedContent);
             }
 
-            $footerPath = VIEWS_PATH . '/templates/footer.php';
-            if (!file_exists($footerPath)) {
-                throw new Exception(sprintf('Footer not found: %s', $footerPath));
-            }
-            ob_start();
-            include_once $footerPath;
-            $content .= ob_get_clean();
-
-            $item->set($content);
-            $this->cache->save($item);
+            $content .= $cachedContent->get();
         }
 
-        return $item->get();
+        $footerPath = VIEWS_PATH . '/templates/footer.php';
+        if (!file_exists($footerPath)) {
+            error_log(gettext('Footer not found: ') . $footerPath);
+        }
+
+        ob_start();
+        include_once $footerPath;
+        $content .= ob_get_clean();
+
+        return $content;
     }
 
     /**
@@ -84,7 +87,7 @@ class View
             $content = $this->load($templateNames, $data);
             echo $content;
         } catch (Exception $e) {
-            echo sprintf('An error occurred: %s', $e->getMessage());
+            error_log(gettext('An error occurred: ') . $e->getMessage());
         }
     }
 }
