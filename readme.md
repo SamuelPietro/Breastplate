@@ -1,8 +1,8 @@
 # pFrame - Quick Start Framework for Free Development
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-![](https://img.shields.io/github/tag/SamuelPietro/pframe)
 ![](https://img.shields.io/github/release/SamuelPietro/pframe)
 ![](https://img.shields.io/github/issues/SamuelPietro/pframe)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9c8c322765b71a7eb7e4/maintainability)](https://codeclimate.com/github/SamuelPietro/pframe/maintainability)
 
 
 pFrame is a quickstart framework for PHP development based on best practices and the MVC pattern. With it, you can create PHP applications using pure language code, without having to worry about initial configurations and other unnecessary aspects.
