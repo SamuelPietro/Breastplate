@@ -1,8 +1,10 @@
 <h1>Login</h1>
 <form action="/login" method="post">
-    <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
-    
-    <?= $error ?>
+    <?= $csrfToken ?>
+
+    <?php if ($error !== '') {
+        echo $error;
+    } ?>
 
     <label for="email">Email:</label>
     <input type="text" name="email" id="email">
