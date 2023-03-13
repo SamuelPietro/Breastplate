@@ -5,85 +5,73 @@ namespace App\Controllers;
 use App\Models\UserModel;
 use App\Views\View;
 use Exception;
-use Psr\Cache\InvalidArgumentException;
+use InvalidArgumentException;
+use Src\Core\Csrf;
 use Src\Core\WebHelper;
+use Src\Database\Connection;
 
-/**
- * Class AuthController
- *
- * This class is used to manage authentication operations.
- */
+
 class AuthController
 {
-    private UserModel $model;
     private View $view;
+    private UserModel $userModel;
+    private WebHelper $webHelper;
+    private Csrf $csrf;
+    private Connection $db;
 
-    /**
-     * AuthController constructor.
-     *
-     * Initializes the controller with an instance of UserModel and View.
-     */
+
     public function __construct()
     {
+        $this->db = new Connection();
         $this->view = new View();
-        $this->model = new UserModel();
+        $this->userModel = new UserModel($this->db);
+        $this->webHelper = new WebHelper();
+        $this->csrf = new Csrf();
     }
 
     /**
-     * Handles the user login.
-     *
-     * @throws InvalidArgumentException
-     * @throws Exception
+     * @throws Exception|InvalidArgumentException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function login(): void
     {
         $error = '';
-        if ((new WebHelper)->isMethod('post')) {
-            $email = WebHelper::input('email');
-            $password = WebHelper::input('password');
+        if ($this->webHelper->isMethod('post')) {
+            $this->csrf->verify();
 
-            $user = $this->model->getByEmail($email);
-
+            $email = $this->webHelper->input('email');
+            $password = $this->webHelper->input('password');
+            $remember = $this->webHelper->input('remember');
+            $user = $this->userModel->getByEmail($email);
             if ($user && password_verify($password, $user['password'])) {
-                WebHelper::setSession('user_id', $user['id']);
-                WebHelper::redirect('/');
+                $this->webHelper->setSession('usr_id', $user['id']);
+                $this->webHelper->setSession('usr_name', $user['name']);
+                $this->webHelper->setSession('usr_email', $user['email']);
+                if (!empty($remember)) {
+                    $this->webHelper->setCookie('remember', $user['id'], time() + 7 * 24 * 3600);
+                }
+                $this->webHelper->redirect('/');
             } else {
-                $error = 'Invalid email or password';
+                $error = gettext('The data provided is invalid. Please check the data and try again.');
             }
         }
-
-        $csrfToken = (new WebHelper)->getCsrfToken();
+        $csrfToken = $this->csrf->generate();
         $this->view->render(['auth/login'], ['csrfToken' => $csrfToken, 'error' => $error]);
     }
 
-    /**
-     * Logs out the user.
-     *
-     * @return void
-     */
     public function logout(): void
     {
-        WebHelper::removeSession('user_id');
-        WebHelper::redirect('/');
+        $this->webHelper->removeSession('usr_id');
+        $this->webHelper->redirect('/');
     }
 
-    /**
-     * Checks if the user is authenticated.
-     *
-     * @return bool
-     */
     public function isAuthenticated(): bool
     {
-        return (new WebHelper)->getSession('user_id') !== null;
+        return $this->webHelper->getSession('usr_id') !== null;
     }
 
-    /**
-     * Gets the current user id.
-     *
-     * @return int|null
-     */
     public function getCurrentUserId(): ?int
     {
-        return (new WebHelper)->getSession('user_id');
+        return $this->webHelper->getSession('usr_id');
     }
 }

@@ -2,7 +2,14 @@
 
 namespace Src\Core;
 
+use DateTime;
 use Exception;
+
+/**
+ * WebHelper class.
+ *
+ * A helper class for web-related functionality.
+ */
 class WebHelper
 {
     /**
@@ -18,14 +25,16 @@ class WebHelper
     }
 
     /**
-     * Get the current URL
+     * This function checks if the given URL is valid or not.
      *
-     * @return string
+     * @param string $url The URL to be checked.
+     *
+     * @return bool Returns TRUE if the URL is valid and FALSE otherwise.
      */
-    public static function currentUrl(): string
+    public static function isUrlValid(string $url): bool
     {
-        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http")
-            . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $pattern = "/^(?:http(s)?:\/\/)?[a-z0-9]+(?:[.\-][a-z0-9]+)*\.[a-z]{2,6}(?:\/.*)?$/i";
+        return preg_match($pattern, $url);
     }
 
     /**
@@ -51,7 +60,7 @@ class WebHelper
             session_start();
         }
     }
-    
+
     /**
      * Get the value of a given key from $_SESSION
      *
@@ -86,7 +95,7 @@ class WebHelper
     {
         return $_SESSION[$key] ?? $default;
     }
-    
+
     /**
      * Remove a value from $_SESSION
      *
@@ -96,6 +105,7 @@ class WebHelper
     public static function removeSession(string $key): void
     {
         unset($_SESSION[$key]);
+        session_destroy();
     }
 
     /**
@@ -136,57 +146,88 @@ class WebHelper
     }
 
     /**
-     * Sets a content security policy (CSP) and sends it as an HTTP header.
+     * Transforms a string to camelCase format.
      *
-     * @return void
-     * @throws Exception if a nonce cannot be generated for use in the content security policy.
+     * @param string $string  The input string.
      *
+     * @return string The input string transformed to camelCase format.
      */
-    public static function setCspHeader(): void
+    public function toCamelCase(string $string): string
     {
-        try {
-            $nonce = bin2hex(random_bytes(16));
-        } catch (Exception $e) {
-            throw new Exception('Unable to generate a nonce for the content security policy.', 0, $e);
-        }
-        $csp = "default-src 'self'; script-src 'self' 'nonce-$nonce'; img-src *; base-uri 'self';
-        font-src 'self' data:; style-src 'self' 'unsafe-inline'; object-src 'none';";
-        header('Content-Security-Policy: ' . $csp);
+        return lcfirst($this->toStudlyCaps($string));
     }
 
     /**
-     * Verifies the CSRF token for the current request
+     * Transforms a string to StudlyCaps format.
      *
-     * @param string $csrfToken The CSRF token to be verified
-     * @return bool True if the token is valid, false otherwise
+     * @param string $string  The input string.
+     *
+     * @return string The input string transformed to StudlyCaps format.
      */
+    public function toStudlyCaps(string $string): string
+    {
+        return str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
+    }
+
+
     /**
-     * Generates a CSRF token and saves it in the session
+     * Check if a password is strong enough
      *
-     * @return string The generated token
+     * @param string $password The password to check
+     *
+     * @return bool True if the password is strong enough, false otherwise
+     */
+    public static function validatePassword(string $password): bool
+    {
+        // Password must be at least 8 characters long
+        if (strlen($password) < 8) {
+            return false;
+        }
+
+        // Password must contain at least one number, one lowercase letter, one uppercase letter, one special character
+        if (!preg_match('/\d/', $password) || !preg_match('/[a-z]/', $password) ||
+            !preg_match('/[A-Z]/', $password) || !preg_match('/\W/', $password)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the current URL
+     *
+     * @return string
+     */
+    public static function currentUrl(): string
+    {
+        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http")
+            . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    }
+
+    /**
+     * Formats a date in the specified format.
+     *
+     * @param string $date The date to be formatted.
+     * @param string $format The desired date format.
+     * @return string The formatted date.
      * @throws Exception
      */
-    public function getCsrfToken(): string
+    public function formatDate(string $date, string $format): string
     {
-        // Generate a random token
-        $token = bin2hex(random_bytes(32));
-
-        // Save the token in the session
-        $_SESSION['csrf_token'] = $token;
-
-        return $token;
+        $dateTime = new DateTime($date);
+        return $dateTime->format($format);
     }
 
-
     /**
-     * Verifies the CSRF token for the current request
+     * Formats a number with thousands separator and decimal point.
      *
-     * @param string $csrfToken The CSRF token to be verified
-     * @return bool True if the token is valid, false otherwise
+     * @param float $number The number to be formatted.
+     * @param int $decimals The number of decimal places.
+     * @return string The formatted number.
      */
-    public function verifyCsrfToken(string $csrfToken): bool
+    public function formatNumber(float $number, int $decimals = 2): string
     {
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $csrfToken);
+        return number_format($number, $decimals, ',', '.');
     }
 
     /**
@@ -199,4 +240,5 @@ class WebHelper
     {
         return $_SERVER['REQUEST_METHOD'] === strtoupper($method);
     }
+
 }

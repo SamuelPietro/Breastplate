@@ -8,7 +8,7 @@ use PDOException;
 /**
  * A class for creating and managing database connections.
  */
-class Connection
+class Connection implements ConnectionInterface
 {
     /**
      * The PDO instance.
@@ -24,6 +24,7 @@ class Connection
      */
     private static ?Connection $instance = null;
 
+
     /**
      * Connection constructor.
      *
@@ -32,7 +33,7 @@ class Connection
      *
      * @throws PDOException
      */
-    protected function __construct()
+    public function __construct()
     {
         $host = $_ENV['DB_HOST'];
         $db = $_ENV['DB_NAME'];
@@ -50,6 +51,7 @@ class Connection
         try {
             $this->pdo = new PDO($dsn, $user, $pass, $options);
         } catch (PDOException $e) {
+            error_log($e->getMessage(), (int)$e->getCode());
             throw new PDOException($e->getMessage(), (int)$e->getCode());
         }
     }
@@ -60,13 +62,27 @@ class Connection
      * @return PDO
      * @throws PDOException
      */
-    public static function getInstance(): PDO
+    public static function getInstancea(): PDO
     {
         if (self::$instance === null) {
             self::$instance = new self();
         }
 
         return self::$instance->pdo;
+    }
+
+    public function connect(): PDO
+    {
+        if ($this->pdo === null) {
+            $this->pdo = self::getInstance();
+        }
+
+        return $this->pdo;
+    }
+
+    public function disconnect(): void
+    {
+        $this->pdo = null;
     }
 }
 
