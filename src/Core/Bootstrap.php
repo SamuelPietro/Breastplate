@@ -21,15 +21,16 @@ class Bootstrap
     public static function init(): void
     {
         try {
+
             self::loadDependencies();
             WebHelper::startSession();
+            self::loadTranslations();
             self::registerErrorHandler();
-            self::registerAutoloader();
             self::defineConstants();
             self::loadRoutes();
-            self::setCSPHeader();
+
         } catch (Exception $e) {
-            error_log('Error initializing the application: ' . $e->getMessage());
+            error_log(gettext('Error initializing the application: ') . $e->getMessage());
             throw $e;
         }
     }
@@ -57,15 +58,6 @@ class Bootstrap
     }
 
     /**
-     * Registers the Autoloader class.
-     */
-    private static function registerAutoloader(): void
-    {
-        $autoloader = new Autoloader();
-        $autoloader->register();
-    }
-
-    /**
      * Defines the BASE_URL and VIEWS_PATH constants.
      */
     private static function defineConstants(): void
@@ -84,18 +76,14 @@ class Bootstrap
         $routes->run();
     }
 
-    /**
-     * Defines the Content-Security-Policy header.
-     * @throws Exception
-     */
-    private static function setCSPHeader(): void
+    private static function loadTranslations(): void
     {
-        WebHelper::setCspHeader();
+        require_once('../gettext.inc');
     }
 }
 
 try {
     Bootstrap::init();
 } catch (Exception $e) {
-    error_log('Error executing the application: ' . $e->getMessage());
+    error_log(gettext('Error executing the application: ') . $e->getMessage());
 }
