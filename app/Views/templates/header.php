@@ -18,3 +18,4 @@
     <!-- Scripts -->
     <script src="<?= $_ENV['BASE_URL'] ?>public/js/script.js" defer></script>
 </head>
+<body>
