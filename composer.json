@@ -19,6 +19,7 @@
     "require": {
         "php": ">=8.0",
         "ext-pdo": "*",
+        "ext-gettext": "*",
         "filp/whoops": "^2.14",
         "symfony/dotenv": "*",
         "symfony/cache": "6.3.x-dev"
