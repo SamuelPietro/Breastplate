@@ -34,8 +34,6 @@ class WebHelper
      */
     public static function setSession(string $key, mixed $value, int $expirationTime = null): void
     {
-        self::startSession();
-
         if ($expirationTime) {
             $_SESSION[$key] = [
                 'value' => $value,
@@ -77,18 +75,6 @@ class WebHelper
     }
 
     /**
-     * Sign in if you haven't already.
-     *
-     * @return void
-     */
-    public static function startSession(): void
-    {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-    }
-
-    /**
      * Returns the value of a key stored in the $_SESSION variable.
      *
      * @param string $key The name of the key to retrieve.
@@ -97,8 +83,6 @@ class WebHelper
      */
     public static function getSession(string $key, mixed $default = null): mixed
     {
-        self::startSession();
-
         if (isset($_SESSION[$key]['expiration_time']) && time() > $_SESSION[$key]['expiration_time']) {
             unset($_SESSION[$key]);
         }
@@ -114,8 +98,6 @@ class WebHelper
      */
     public static function removeSession(string $key): void
     {
-        self::startSession();
-
         unset($_SESSION[$key]);
 
         if (empty($_SESSION)) {

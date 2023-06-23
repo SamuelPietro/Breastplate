@@ -4,85 +4,135 @@ namespace Src\Database;
 
 use PDO;
 use PDOException;
+use SplQueue;
 
 /**
- * A class for creating and managing database connections.
+ * A class for managing a connection pool for database connections.
  */
 class Connection implements ConnectionInterface
 {
     /**
-     * The PDO instance.
+     * The maximum number of connections allowed in the pool.
      *
-     * @var PDO
+     * @var int
      */
-    private PDO $pdo;
+    private int $maxConnections;
 
     /**
-     * The single instance of the Connection class.
+     * The queue of available connections.
      *
-     * @var Connection|null
+     * @var SplQueue
      */
-    private static ?Connection $instance = null;
-
+    private SplQueue $availableConnections;
 
     /**
-     * Connection constructor.
+     * The PDO connection options.
      *
-     * Creates a new PDO instance using the provided database connection details.
-     * Throws a PDOException if there's a problem connecting to the database.
-     *
-     * @throws PDOException
+     * @var array
      */
-    public function __construct()
+    private array $pdoOptions;
+
+    /**
+     * ConnectionPool constructor.
+     *
+     */
+    public function __construct(int $maxConnections = 10)
     {
-        $host = $_ENV['DB_HOST'];
-        $db = $_ENV['DB_NAME'];
-        $user = $_ENV['DB_USER'];
-        $pass = $_ENV['DB_PASS'];
-        $port = $_ENV['DB_PORT'];
-        $charset = $_ENV['DB_CHARSET'];
-        $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=$charset";
-        $options = [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
+        $this->maxConnections = $maxConnections;
+        $this->pdoOptions = [
+            'mysql:host=' . $_ENV['DB_HOST'] . ';port=' . $_ENV['DB_PORT'] . ';dbname=' . $_ENV['DB_NAME'],
+            $_ENV['DB_USER'],
+            $_ENV['DB_PASS'],
+            [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ],
         ];
-
-        try {
-            $this->pdo = new PDO($dsn, $user, $pass, $options);
-        } catch (PDOException $e) {
-            error_log($e->getMessage(), (int)$e->getCode());
-            throw new PDOException($e->getMessage(), (int)$e->getCode());
-        }
+        $this->availableConnections = new SplQueue();
     }
 
     /**
-     * Get a single instance of the PDO object for the database connection.
+     * Get a PDO instance from the connection pool.
      *
      * @return PDO
      * @throws PDOException
      */
-    public static function getInstancea(): PDO
+    public function getConnection(): PDO
     {
-        if (self::$instance === null) {
-            self::$instance = new self();
+        if (!$this->availableConnections->isEmpty()) {
+            return $this->availableConnections->dequeue();
         }
 
-        return self::$instance->pdo;
+        if ($this->getTotalConnections() < $this->maxConnections) {
+            return $this->createConnection();
+        }
+
+        throw new PDOException('Connection pool is full. Unable to get a connection.');
     }
 
+    /**
+     * Release a PDO instance back to the connection pool.
+     *
+     * @param PDO $connection
+     */
+    public function releaseConnection(PDO $connection): void
+    {
+        $this->availableConnections->enqueue($connection);
+    }
+
+    /**
+     * Close all connections in the connection pool.
+     */
+    public function closeConnections(): void
+    {
+        while (!$this->availableConnections->isEmpty()) {
+            $connection = $this->availableConnections->dequeue();
+            $connection = null;
+        }
+    }
+
+    /**
+     * Get the total number of connections in the connection pool.
+     *
+     * @return int
+     */
+    public function getTotalConnections(): int
+    {
+        return $this->availableConnections->count();
+    }
+
+    /**
+     * Create a new PDO connection.
+     *
+     * @return PDO
+     * @throws PDOException
+     */
+    private function createConnection(): PDO
+    {
+        try {
+            $pdo = new PDO(...$this->pdoOptions);
+            return $pdo;
+        } catch (PDOException $exception) {
+            throw new PDOException('Failed to create a new database connection.', 0, $exception);
+        }
+    }
+
+    /**
+     * Get a PDO instance for the database connection.
+     *
+     * @return PDO
+     * @throws PDOException
+     */
     public function connect(): PDO
     {
-        if ($this->pdo === null) {
-            $this->pdo = self::getInstance();
-        }
-
-        return $this->pdo;
+        return $this->getConnection();
     }
 
+    /**
+     * Close the PDO connection.
+     */
     public function disconnect(): void
     {
-        $this->pdo = null;
+        $this->closeConnections();
     }
 }
-

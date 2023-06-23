@@ -6,8 +6,8 @@ use App\Models\UserModel;
 use App\Views\View;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
-use Src\Database\Connection;
 use Src\Core\WebHelper;
+use Src\Database\Connection;
 
 /**
  * Class AppController
@@ -18,7 +18,7 @@ class AppController
 {
     private View $view;
     private AuthController $authController;
-    private Connection $db;
+    private UserModel $userModel;
 
     /**
      * AppController constructor.
@@ -27,12 +27,12 @@ class AppController
      */
     public function __construct()
     {
-        $this->db = new Connection();
         $this->authController = new AuthController();
         if (!$this->authController->isAuthenticated()) {
             WebHelper::redirect('/login');
         }
         $this->view = new View();
+        $this->userModel = new UserModel(new Connection());
     }
 
     /**
@@ -58,7 +58,7 @@ class AppController
      */
     public function notFound(): void
     {
-        $user = $this->userModel->getById(WebHelper::session('usr_id'));
+        $user = $this->userModel->getById(WebHelper::getSession('usr_id'));
         $templateName = ['templates/sidebar', 'error/404'];
         $data = compact('user');
         $this->view->render($templateName, $data);

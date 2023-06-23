@@ -14,25 +14,44 @@ use Whoops\Run;
  */
 class Bootstrap
 {
+    private ErrorHandler $errorHandler;
+    private Router $router;
+    private Routes $routes;
+
     /**
      * Initializes the application.
      *
      * @throws Exception If an error occurs while starting the application.
      */
-    public static function init(): void
+    public function __construct()
+    {
+        $this->loadDependencies();
+        $this->startSession();
+        $this->errorHandler = new ErrorHandler();
+        $this->router = new Router($this->errorHandler);
+        $this->routes = new Routes($this->router);
+    }
+
+    public function init(): void
     {
         try {
-            self::loadDependencies();
-            WebHelper::startSession();
-            self::registerErrorHandler();
-            self::defineConstants();
-            $errorHandler = new ErrorHandler();
-            $router = new Router($errorHandler);
-            $routes = new Routes($router);
-            self::loadRoutes($routes);
+            $this->defineConstants();
+            $this->registerErrorHandler();
+            $this->loadRoutes();
         } catch (Exception $e) {
-            error_log('Error initializing the application: ' . $e->getMessage());
-            throw $e;
+            $this->handleError($e);
+        }
+    }
+
+    /**
+     * Sign in if you haven't already.
+     *
+     * @return void
+     */
+    private function startSession(): void
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
         }
     }
 
@@ -40,9 +59,9 @@ class Bootstrap
      * Loads project dependencies through Composer's autoloader and loads environment variables
      * from the .env file.
      */
-    private static function loadDependencies(): void
+    private function loadDependencies(): void
     {
-        require_once __DIR__ . '/../../vendor/autoload.php';
+        require __DIR__ . '/../../vendor/autoload.php';
 
         $dotenv = new Dotenv();
         $dotenv->load(__DIR__ . '/../../.env');
@@ -51,7 +70,7 @@ class Bootstrap
     /**
      * Registers the Whoops error handler.
      */
-    private static function registerErrorHandler(): void
+    private function registerErrorHandler(): void
     {
         $whoops = new Run;
         $whoops->pushHandler(new PrettyPageHandler);
@@ -61,7 +80,7 @@ class Bootstrap
     /**
      * Defines the BASE_URL and VIEWS_PATH constants.
      */
-    private static function defineConstants(): void
+    private function defineConstants(): void
     {
         define('BASE_URL', getenv('BASE_URL'));
         define("VIEWS_PATH", __DIR__ . '/../../app/Views/');
@@ -70,17 +89,29 @@ class Bootstrap
     /**
      * Loads the routes file.
      *
-     * @param Routes $routes The routes instance.
      * @throws Exception
      */
-    private static function loadRoutes(Routes $routes): void
+    private function loadRoutes(): void
     {
-        $routes->run();
+        $this->routes->run();
+    }
+
+    /**
+     * Handles the error by logging and re-throwing the exception.
+     *
+     * @param Exception $e The exception to handle.
+     * @throws Exception The re-thrown exception.
+     */
+    private function handleError(Exception $e): void
+    {
+        error_log('Error initializing the application: ' . $e->getMessage());
+        throw $e;
     }
 }
 
 try {
-    Bootstrap::init();
+    $bootstrap = new Bootstrap();
+    $bootstrap->init();
 } catch (Exception $e) {
     error_log('Error executing the application: ' . $e->getMessage());
 }

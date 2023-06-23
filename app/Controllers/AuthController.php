@@ -17,14 +17,12 @@ class AuthController
     private UserModel $userModel;
     private WebHelper $webHelper;
     private Csrf $csrf;
-    private Connection $db;
 
 
     public function __construct()
     {
-        $this->db = new Connection();
         $this->view = new View();
-        $this->userModel = new UserModel($this->db);
+        $this->userModel = new UserModel(new Connection());
         $this->webHelper = new WebHelper();
         $this->csrf = new Csrf();
     }
