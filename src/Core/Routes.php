@@ -19,9 +19,9 @@ class Routes
     /**
      * Constructor.
      */
-    public function __construct()
+    public function __construct(Router $router)
     {
-        $this->router = new Router();
+        $this->router = $router;
         $this->defineRoutes();
     }
 
@@ -46,9 +46,9 @@ class Routes
     /**
      * Runs the application.
      *
+     * @return void
      * @throws Exception If an error occurs while getting the routes.
      *
-     * @return void
      */
     public function run(): void
     {
@@ -59,7 +59,7 @@ class Routes
         try {
             $this->router->route($method, $path);
         } catch (Exception $e) {
-            error_log('Error getting routes' . $e->getMessage());
+            error_log('Error getting routes ' . $e->getMessage());
         }
     }
 }

@@ -2,72 +2,87 @@
 
 namespace Src\Core;
 
-use Exception;
+use Src\Exceptions\ErrorHandler;
+use Src\Extensions\FormatTextExtension;
 
-
-/**
- * The Router class is responsible for handling the routes and dispatching them to the proper controllers and actions.
- */
 class Router
 {
-    /**
-     * An array of all the defined routes.
-     *
-     * @var array
-     */
     private array $routes = [];
+    private ErrorHandler $errorHandler;
 
-    /**
-     * Adds a new route to the Router.
-     *
-     * @param string $method      The HTTP method for this route, for example "GET" or "POST".
-     * @param string $path        The URL path for this route.
-     * @param string $controller  The name of the Controller class that this route should trigger.
-     * @param string $action      The name of the action (method) in the Controller class that this
-     * route should trigger.
-     *
-     * @return void
-     */
+    public function __construct(ErrorHandler $errorHandler)
+    {
+        $this->errorHandler = $errorHandler;
+    }
+
     public function addRoute(string $method, string $path, string $controller, string $action): void
     {
-        $webHelper = new WebHelper();
-        // Add the route to the routes array
+        $formatText = new FormatTextExtension();
+        $path = preg_quote($path, '/');
         $this->routes[] = [
             'method' => $method,
             'path' => $path,
-            'controller' => $webHelper->toStudlyCaps($controller),
-            'action' => $webHelper->toCamelCase($action),
+            'controller' => $formatText->toPascalCase($controller),
+            'action' => $formatText->toLowerCase($action),
         ];
     }
 
-    /**
-     * Tries to route the incoming request to the proper Controller and action.
-     *
-     * @param string $method  The HTTP method of the incoming request.
-     * @param string $path    The URL path of the incoming request.
-     *
-     * @throws Exception If the incoming request cannot be routed to a Controller and action.
-     *
-     * @return void
-     */
     public function route(string $method, string $path): void
+    {
+        $route = $this->findMatchingRoute($method, $path);
+
+        if ($route === null) {
+            $this->errorHandler->handleNotFound();
+            return;
+        }
+
+        $this->dispatchRoute($route, $path);
+    }
+
+    private function findMatchingRoute(string $method, string $path): ?array
     {
         foreach ($this->routes as $route) {
             $routePath = preg_replace('/{(\w+)}/', '(\w+)', $route['path']);
-            if (preg_match("#^$routePath$#", $path, $matches) && $route['method'] == $method) {
-                $controllerClass = "App\Controllers\\" . $route['controller'];
-                $controller = new $controllerClass();
-                $action = $route['action'];
-                array_shift($matches);
-                call_user_func_array([$controller, $action], $matches);
-                return;
+            if (preg_match("#^$routePath$#", $path, $matches) && $route['method'] === $method) {
+                return $route;
             }
         }
 
-        // Wildcard route - runs the default controller and default action
-        $controllerClass = "App\Controllers\\AppController";
-        $controller = new $controllerClass();
-        $action = 'notFound';
-        call_user_func_array([$controller, $action], []);
+        return null;
+    }
+
+    private function dispatchRoute(array $route, string $path): void
+    {
+        $controllerClassName = "App\Controllers\\" . $route['controller'];
+        $controller = new $controllerClassName();
+        $action = $route['action'];
+
+        $params = $this->extractRouteParams($route['path'], $path);
+
+        if (method_exists($controller, $action)) {
+            call_user_func_array([$controller, $action], $params);
+        } else {
+            $this->errorHandler->handleNotFound();
+        }
+    }
+
+    private function extractRouteParams(string $routePath, string $path): array
+    {
+        $params = [];
+        $pattern = '/{(\w+)}/';
+        preg_match_all($pattern, $routePath, $matches);
+
+        if (!empty($matches[1])) {
+            $paramNames = $matches[1];
+            $pathParts = explode('/', trim($path, '/'));
+
+            foreach ($paramNames as $index => $paramName) {
+                if (isset($pathParts[$index])) {
+                    $params[] = $pathParts[$index];
+                }
+            }
+        }
+
+        return $params;
     }
 }

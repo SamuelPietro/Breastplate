@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Src\Core;
 
 use Exception;
+use Src\Exceptions\ErrorHandler;
 use Symfony\Component\Dotenv\Dotenv;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
@@ -21,13 +22,14 @@ class Bootstrap
     public static function init(): void
     {
         try {
-
             self::loadDependencies();
             WebHelper::startSession();
             self::registerErrorHandler();
             self::defineConstants();
-            self::loadRoutes();
-
+            $errorHandler = new ErrorHandler();
+            $router = new Router($errorHandler);
+            $routes = new Routes($router);
+            self::loadRoutes($routes);
         } catch (Exception $e) {
             error_log('Error initializing the application: ' . $e->getMessage());
             throw $e;
@@ -67,11 +69,12 @@ class Bootstrap
 
     /**
      * Loads the routes file.
+     *
+     * @param Routes $routes The routes instance.
      * @throws Exception
      */
-    private static function loadRoutes(): void
+    private static function loadRoutes(Routes $routes): void
     {
-        $routes = new Routes();
         $routes->run();
     }
 }
