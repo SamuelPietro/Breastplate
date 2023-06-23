@@ -31,8 +31,10 @@ class Csrf
      */
     public function verify(): bool
     {
-        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $this->token) {
+        $csrfToken = filter_input(INPUT_POST, 'csrf_token', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        if (!isset($csrfToken) || $csrfToken !== $this->token) {
             error_log('Invalid CSRF Token');
+            return false;
         }
         return true;
     }
