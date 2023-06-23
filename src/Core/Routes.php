@@ -59,7 +59,7 @@ class Routes
         try {
             $this->router->route($method, $path);
         } catch (Exception $e) {
-            error_log(gettext('Error getting routes') . $e->getMessage());
+            error_log('Error getting routes' . $e->getMessage());
         }
     }
 }

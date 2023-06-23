@@ -24,13 +24,12 @@ class Bootstrap
 
             self::loadDependencies();
             WebHelper::startSession();
-            self::loadTranslations();
             self::registerErrorHandler();
             self::defineConstants();
             self::loadRoutes();
 
         } catch (Exception $e) {
-            error_log(gettext('Error initializing the application: ') . $e->getMessage());
+            error_log('Error initializing the application: ' . $e->getMessage());
             throw $e;
         }
     }
@@ -75,15 +74,10 @@ class Bootstrap
         $routes = new Routes();
         $routes->run();
     }
-
-    private static function loadTranslations(): void
-    {
-        require_once('../gettext.inc');
-    }
 }
 
 try {
     Bootstrap::init();
 } catch (Exception $e) {
-    error_log(gettext('Error executing the application: ') . $e->getMessage());
+    error_log('Error executing the application: ' . $e->getMessage());
 }

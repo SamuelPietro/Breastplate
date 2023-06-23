@@ -5,7 +5,6 @@ namespace App\Views;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-
 use function ob_get_clean;
 
 /**
@@ -36,7 +35,7 @@ class View
         $headerPath = VIEWS_PATH . '/templates/header.php';
 
         if (!file_exists($headerPath)) {
-            error_log(gettext('Header not found: ') . $headerPath);
+            error_log('Header not found: ' . $headerPath);
         }
 
         ob_start();
@@ -46,7 +45,7 @@ class View
         foreach ($templateNames as $templateName) {
             $templatePath = VIEWS_PATH . '/' . $templateName . '.php';
             if (!file_exists($templatePath)) {
-                error_log(gettext('Template not found: ') . $templatePath);
+                error_log('Template not found: ' . $templatePath);
             }
 
             $cacheKey = md5($templateName . serialize($request));
@@ -64,7 +63,7 @@ class View
 
         $footerPath = VIEWS_PATH . '/templates/footer.php';
         if (!file_exists($footerPath)) {
-            error_log(gettext('Footer not found: ') . $footerPath);
+            error_log('Footer not found: ' . $footerPath);
         }
 
         ob_start();
@@ -87,7 +86,7 @@ class View
             $content = $this->load($templateNames, $data);
             echo $content;
         } catch (Exception $e) {
-            error_log(gettext('An error occurred: ') . $e->getMessage());
+            error_log('An error occurred: ' . $e->getMessage());
         }
     }
 }

@@ -52,7 +52,7 @@ class AuthController
                 }
                 $this->webHelper->redirect('/');
             } else {
-                $error = gettext('The data provided is invalid. Please check the data and try again.');
+                $error = 'The data provided is invalid. Please check the data and try again.';
             }
         }
         $csrfToken = $this->csrf->generate();

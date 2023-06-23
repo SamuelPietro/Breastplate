@@ -29,7 +29,7 @@ class UserModel
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log(gettext('Error getting all users') . $e->getMessage());
+            error_log('Error getting all users' . $e->getMessage());
             return [];
         }
     }
@@ -47,7 +47,7 @@ class UserModel
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return empty($result) ? null : $result[0];
         } catch (PDOException $e) {
-            error_log(gettext('Error getting user') . $e->getMessage());
+            error_log('Error getting user' . $e->getMessage());
             return [];
         }
     }
@@ -70,9 +70,9 @@ class UserModel
             $stmt->execute();
 
         } catch (PDOException $e) {
-            error_log(gettext('Error creating user in database ') . $e->getMessage());
+            error_log('Error creating user in database ' . $e->getMessage());
         } catch (Exception $e) {
-            error_log(gettext('Error creating user ') . $e->getMessage());
+            error_log('Error creating user ' . $e->getMessage());
         }
     }
 
@@ -97,7 +97,7 @@ class UserModel
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
         } catch (PDOException $e) {
-            error_log(gettext('Error editing user') . $e->getMessage());
+            error_log('Error editing user' . $e->getMessage());
         }
     }
 
@@ -112,7 +112,7 @@ class UserModel
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             return $stmt->execute();
         } catch (PDOException $e) {
-            error_log(gettext('Error deleting user ') . $e->getMessage());
+            error_log('Error deleting user ' . $e->getMessage());
             return 0;
         }
     }
@@ -133,7 +133,7 @@ class UserModel
             }
             return $result;
         } catch (PDOException $e) {
-            error_log(gettext('Error getting user by email ') . $e->getMessage());
+            error_log('Error getting user by email ' . $e->getMessage());
             return [];
         }
     }
@@ -150,7 +150,7 @@ class UserModel
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log(gettext('Error getting user by name ') . $e->getMessage());
+            error_log('Error getting user by name ' . $e->getMessage());
             return [];
         }
     }
@@ -166,7 +166,7 @@ class UserModel
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC)['count'];
         } catch (PDOException $e) {
-            error_log(gettext('Error getting user count ') . $e->getMessage());
+            error_log('Error getting user count ' . $e->getMessage());
             return 0;
         }
     }
@@ -185,7 +185,7 @@ class UserModel
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log(gettext('Error getting list of users ') . $e->getMessage());
+            error_log('Error getting list of users ' . $e->getMessage());
             return [];
         }
     }
@@ -204,7 +204,7 @@ class UserModel
         try {
             return $stmt->execute();
         } catch (PDOException $e) {
-            error_log(gettext('Error when changing user password ') . $e->getMessage());
+            error_log('Error when changing user password ' . $e->getMessage());
             return false;
         }
     }

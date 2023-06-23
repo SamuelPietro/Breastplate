@@ -32,7 +32,7 @@ class Csrf
     public function verify(): bool
     {
         if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $this->token) {
-            error_log(gettext('Invalid CSRF Token'));
+            error_log('Invalid CSRF Token');
         }
         return true;
     }
