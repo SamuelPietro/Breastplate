@@ -82,7 +82,7 @@ class Bootstrap
      */
     private function defineConstants(): void
     {
-        define('BASE_URL', getenv('BASE_URL'));
+        define('BASE_URL', $_ENV['BASE_URL']);
         define("VIEWS_PATH", __DIR__ . '/../../app/Views/');
     }
 

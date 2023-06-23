@@ -3,9 +3,15 @@
 namespace Src\Extensions;
 
 use DateTime;
+use League\Plates\Engine;
+use League\Plates\Extension\ExtensionInterface;
 
-class FormatTimestampExtension
+class FormatTimestampExtension implements ExtensionInterface
 {
+    public function register(Engine $engine): void
+    {
+        $engine->registerFunction('format_timestamp', [$this, 'formatTimestamp']);
+    }
 
     public function formatTimestamp($timestamp, $format = null): string
     {
@@ -25,6 +31,6 @@ class FormatTimestampExtension
 
     public function getCurrentLocale(): false|array|string
     {
-        return getenv('LANG');
+        return $_ENV['LANG'];
     }
 }

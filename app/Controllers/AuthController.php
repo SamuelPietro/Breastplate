@@ -6,6 +6,7 @@ use App\Models\UserModel;
 use App\Views\View;
 use Exception;
 use InvalidArgumentException;
+use JetBrains\PhpStorm\NoReturn;
 use Src\Core\Csrf;
 use Src\Core\WebHelper;
 use Src\Database\Connection;
@@ -53,11 +54,10 @@ class AuthController
                 $error = 'The data provided is invalid. Please check the data and try again.';
             }
         }
-        $csrfToken = $this->csrf->generate();
-        $this->view->render(['auth/login'], ['csrfToken' => $csrfToken, 'error' => $error]);
+        echo $this->view->render('auth/login', ['error' => $error]);
     }
 
-    public function logout(): void
+    #[NoReturn] public function logout(): void
     {
         $this->webHelper->removeSession('usr_id');
         $this->webHelper->redirect('/');

@@ -2,10 +2,14 @@
 
 namespace App\Views;
 
-use Exception;
+use League\Plates\Engine;
 use Psr\Cache\InvalidArgumentException;
+use Src\Core\Csrf;
+use Src\Core\WebHelper;
+use Src\Extensions\Base64Extension;
+use Src\Extensions\FormatTextExtension;
+use Src\Extensions\FormatTimestampExtension;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use function ob_get_clean;
 
 /**
  * Class View
@@ -14,79 +18,53 @@ use function ob_get_clean;
  */
 class View
 {
+    private Engine $plates;
+    private Csrf $csrf;
+    private WebHelper $webHelper;
     private FilesystemAdapter $cache;
+    private string $templatesDir;
 
     public function __construct()
     {
+        $this->plates = new Engine(__DIR__);
+        $this->csrf = new Csrf();
+        $this->plates->addFolder('default', __DIR__ . '/');
+        $this->plates->addData([
+            'timestamp' => time(),
+            'csrf' => ['generate' => $this->csrf->generate()],
+        ]);
+        $this->plates->loadExtension(new FormatTextExtension());
+        $this->plates->loadExtension(new FormatTimestampExtension());
+        $this->plates->loadExtension(new Base64Extension());
+
+        $this->webHelper = new WebHelper();
         $this->cache = new FilesystemAdapter();
+        $this->templatesDir = realpath(__DIR__ . '/../Views');
     }
 
     /**
-     * Loads one or more templates and returns their content.
-     *
-     * @param string[] $templateNames Names of the template files to load.
-     * @param array $request Array containing the variables that will be extracted and made available to the templates.
-     * @return string The content of the loaded templates.
-     * @throws Exception|InvalidArgumentException if any of the template files do not exist.
+     * @throws InvalidArgumentException
      */
-    public function load(array $templateNames, array $request = []): string
+    public function render($templateName, $data = []): string
     {
-        $content = '';
-        $headerPath = VIEWS_PATH . '/templates/header.php';
+        $templateFile = $this->templatesDir . '/' . $templateName;
+        $dataHash = md5(serialize($this->plates->getData()));
+        $cacheKey = 'template_' . md5($templateFile . (file_exists($templateFile) ? filemtime($templateFile) : '') . $dataHash);
+        $cachedResult = $this->cache->getItem($cacheKey);
 
-        if (!file_exists($headerPath)) {
-            error_log('Header not found: ' . $headerPath);
-        }
-
-        ob_start();
-        include_once $headerPath;
-        $content .= ob_get_clean();
-
-        foreach ($templateNames as $templateName) {
-            $templatePath = VIEWS_PATH . '/' . $templateName . '.php';
-            if (!file_exists($templatePath)) {
-                error_log('Template not found: ' . $templatePath);
+        if (!$cachedResult->isHit()) {
+            $redirectData = $this->webHelper->getSession('redirect_data');
+            if ($redirectData !== null) {
+                $data = array_merge($data, $redirectData['value']);
             }
 
-            $cacheKey = md5($templateName . serialize($request));
-            $cachedContent = $this->cache->getItem($cacheKey);
-            if (!$cachedContent->isHit()) {
-                extract($request);
-                ob_start();
-                include_once $templatePath;
-                $cachedContent->set(ob_get_clean());
-                $this->cache->save($cachedContent);
-            }
-
-            $content .= $cachedContent->get();
+            $result = $this->plates->render($templateName, $data);
+            $cachedResult->set($result);
+            $this->cache->save($cachedResult);
+        } else {
+            $result = $cachedResult->get();
         }
 
-        $footerPath = VIEWS_PATH . '/templates/footer.php';
-        if (!file_exists($footerPath)) {
-            error_log('Footer not found: ' . $footerPath);
-        }
-
-        ob_start();
-        include_once $footerPath;
-        $content .= ob_get_clean();
-
-        return $content;
-    }
-
-    /**
-     * Renders one or more templates and displays their content.
-     *
-     * @param string[] $templateNames Names of the template files that will be rendered.
-     * @param array $data Array containing the variables that will be made available to the templates.
-     * @throws Exception|InvalidArgumentException If an error occurs during execution.
-     */
-    public function render(array $templateNames, array $data = []): void
-    {
-        try {
-            $content = $this->load($templateNames, $data);
-            echo $content;
-        } catch (Exception $e) {
-            error_log('An error occurred: ' . $e->getMessage());
-        }
+        return $result;
     }
 }

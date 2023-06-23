@@ -4,6 +4,7 @@ namespace Src\Core;
 
 use DateTime;
 use Exception;
+use JetBrains\PhpStorm\NoReturn;
 
 /**
  * WebHelper class.
@@ -16,13 +17,16 @@ class WebHelper
      * Redirect to a given URL
      *
      * @param string $url
+     * @param array $data
      * @return void
      */
-    public static function redirect(string $url): void
+    #[NoReturn] public static function redirect(string $url, array $data = []): void
     {
+        self::setSession('redirect_data', $data, 3);
         header("Location: $url");
         exit;
     }
+
 
     /**
      * Set a value for a given key in $_SESSION

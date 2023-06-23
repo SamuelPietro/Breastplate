@@ -2,8 +2,15 @@
 
 namespace Src\Extensions;
 
-class FormatTextExtension
+use League\Plates\Engine;
+use League\Plates\Extension\ExtensionInterface;
+
+class FormatTextExtension implements ExtensionInterface
 {
+    public function register(Engine $engine): void
+    {
+        $engine->registerFunction('format_text', [$this, 'formatText']);
+    }
 
     public function formatText(string $string, string $style): string
     {
