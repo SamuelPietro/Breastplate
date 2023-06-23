@@ -17,7 +17,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "ext-pdo": "*",
         "ext-gettext": "*",
         "filp/whoops": "^2.14",
