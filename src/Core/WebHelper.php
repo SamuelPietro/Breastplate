@@ -25,6 +25,28 @@ class WebHelper
     }
 
     /**
+     * Set a value for a given key in $_SESSION
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param int|null $expirationTime
+     * @return void
+     */
+    public static function setSession(string $key, mixed $value, int $expirationTime = null): void
+    {
+        self::startSession();
+
+        if ($expirationTime) {
+            $_SESSION[$key] = [
+                'value' => $value,
+                'expiration_time' => time() + $expirationTime
+            ];
+        } else {
+            $_SESSION[$key] = $value;
+        }
+    }
+
+    /**
      * This function checks if the given URL is valid or not.
      *
      * @param string $url The URL to be checked.
@@ -33,8 +55,7 @@ class WebHelper
      */
     public static function isUrlValid(string $url): bool
     {
-        $pattern = "/^(?:http(s)?:\/\/)?[a-z0-9]+(?:[.\-][a-z0-9]+)*\.[a-z]{2,6}(?:\/.*)?$/i";
-        return preg_match($pattern, $url);
+        return filter_var($url, FILTER_VALIDATE_URL) !== false;
     }
 
     /**
@@ -42,11 +63,17 @@ class WebHelper
      *
      * @param string $key
      * @param mixed|null $default
+     * @param int $filter
      * @return mixed
      */
-    public static function input(string $key, mixed $default = null): mixed
+    public static function input(
+        string $key,
+        mixed  $default = null,
+        int    $filter = FILTER_SANITIZE_FULL_SPECIAL_CHARS
+    ): mixed
     {
-        return $_REQUEST[$key] ?? $default;
+        $value = $_REQUEST[$key] ?? $default;
+        return filter_var($value, $filter);
     }
 
     /**
@@ -62,37 +89,20 @@ class WebHelper
     }
 
     /**
-     * Get the value of a given key from $_SESSION
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public static function session(string $key, mixed $default = null): mixed
-    {
-        return $_SESSION[$key] ?? $default;
-    }
-
-    /**
-     * Set a value for a given key in $_SESSION
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public static function setSession(string $key, mixed $value): void
-    {
-        $_SESSION[$key] = $value;
-    }
-    /**
      * Returns the value of a key stored in the $_SESSION variable.
      *
      * @param string $key The name of the key to retrieve.
      * @param mixed|null $default The default value to be returned if the key is not found.
      * @return mixed The value of the key in $_SESSION or the default value provided.
      */
-    public function getSession(string $key, mixed $default = null): mixed
+    public static function getSession(string $key, mixed $default = null): mixed
     {
+        self::startSession();
+
+        if (isset($_SESSION[$key]['expiration_time']) && time() > $_SESSION[$key]['expiration_time']) {
+            unset($_SESSION[$key]);
+        }
+
         return $_SESSION[$key] ?? $default;
     }
 
@@ -104,8 +114,13 @@ class WebHelper
      */
     public static function removeSession(string $key): void
     {
+        self::startSession();
+
         unset($_SESSION[$key]);
-        session_destroy();
+
+        if (empty($_SESSION)) {
+            session_destroy();
+        }
     }
 
     /**
@@ -115,9 +130,9 @@ class WebHelper
      * @param mixed|null $default
      * @return mixed
      */
-    public static function cookie(string $key, mixed $default = null): mixed
+    public static function getCookie(string $key, mixed $default = null): mixed
     {
-        return $_COOKIE[$key] ?? $default;
+        return filter_input(INPUT_COOKIE, $key, FILTER_SANITIZE_SPECIAL_CHARS) ?? $default;
     }
 
     /**
@@ -127,48 +142,51 @@ class WebHelper
      * @param mixed $value
      * @param int $expire
      * @param string $domain
+     * @param bool $secure
      * @return void
      */
-    public static function setCookie(string $key, mixed $value, int $expire = 0, string $domain = '/'): void
+    public static function setCookie(
+        string $key,
+        mixed  $value,
+        int    $expire = 0,
+        string $domain = '/',
+        bool   $secure = false
+    ): void
     {
-        setcookie($key, $value, $expire, $domain);
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+            $secure = true;
+        }
+
+        setcookie($key, $value, [
+            'expires' => $expire,
+            'path' => $domain,
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Strict'
+        ]);
     }
 
     /**
      * Remove a value from $_COOKIE
      *
      * @param string $key
+     * @param bool $secure
      * @return void
      */
-    public static function removeCookie(string $key): void
+    public static function removeCookie(string $key, bool $secure = false): void
     {
-        setcookie($key, '', time() - 3600);
-    }
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+            $secure = true;
+        }
 
-    /**
-     * Transforms a string to camelCase format.
-     *
-     * @param string $string  The input string.
-     *
-     * @return string The input string transformed to camelCase format.
-     */
-    public function toCamelCase(string $string): string
-    {
-        return lcfirst($this->toStudlyCaps($string));
+        setcookie($key, '', [
+            'expires' => time() - 3600,
+            'path' => '/',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Strict'
+        ]);
     }
-
-    /**
-     * Transforms a string to StudlyCaps format.
-     *
-     * @param string $string  The input string.
-     *
-     * @return string The input string transformed to StudlyCaps format.
-     */
-    public function toStudlyCaps(string $string): string
-    {
-        return str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
-    }
-
 
     /**
      * Check if a password is strong enough
@@ -186,7 +204,7 @@ class WebHelper
 
         // Password must contain at least one number, one lowercase letter, one uppercase letter, one special character
         if (!preg_match('/\d/', $password) || !preg_match('/[a-z]/', $password) ||
-            !preg_match('/[A-Z]/', $password) || !preg_match('/\W/', $password)) {
+            !preg_match('/[A-Z]/', $password) || !preg_match('/[\W_]/', $password)) {
             return false;
         }
 
@@ -200,8 +218,11 @@ class WebHelper
      */
     public static function currentUrl(): string
     {
-        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http")
-            . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'];
+        $uri = $_SERVER['REQUEST_URI'];
+
+        return $protocol . '://' . $host . $uri;
     }
 
     /**
@@ -212,7 +233,7 @@ class WebHelper
      * @return string The formatted date.
      * @throws Exception
      */
-    public function formatDate(string $date, string $format): string
+    public static function formatDate(string $date, string $format): string
     {
         $dateTime = new DateTime($date);
         return $dateTime->format($format);
@@ -225,7 +246,7 @@ class WebHelper
      * @param int $decimals The number of decimal places.
      * @return string The formatted number.
      */
-    public function formatNumber(float $number, int $decimals = 2): string
+    public static function formatNumber(float $number, int $decimals = 2): string
     {
         return number_format($number, $decimals, ',', '.');
     }
@@ -236,9 +257,8 @@ class WebHelper
      * @param string $method The method to check (e.g. 'GET', 'POST', 'PUT', etc.)
      * @return bool Returns `true` if the current request method is the same as the given method, and `false` otherwise.
      */
-    public function isMethod(string $method): bool
+    public static function isMethod(string $method): bool
     {
         return $_SERVER['REQUEST_METHOD'] === strtoupper($method);
     }
-
 }
