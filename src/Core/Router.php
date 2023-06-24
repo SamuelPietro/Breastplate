@@ -72,14 +72,13 @@ class Router
         $pattern = '/{(\w+)}/';
         preg_match_all($pattern, $routePath, $matches);
 
-        if (!empty($matches[1])) {
-            $paramNames = $matches[1];
-            $pathParts = explode('/', trim($path, '/'));
+        $paramNames = $matches[1] ?? [];
 
-            foreach ($paramNames as $index => $paramName) {
-                if (isset($pathParts[$index])) {
-                    $params[] = $pathParts[$index];
-                }
+        $pathParts = explode('/', trim($path, '/'));
+
+        foreach ($paramNames as $index => $paramName) {
+            if (isset($pathParts[$index])) {
+                $params[] = $pathParts[$index];
             }
         }
 
