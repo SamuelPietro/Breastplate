@@ -126,31 +126,28 @@ class WebHelper
      *
      * @param string $key
      * @param mixed $value
-     * @param int $expire
-     * @param string $domain
-     * @param bool $secure
+     * @param array $options
      * @return void
      */
-    public static function setCookie(
-        string $key,
-        mixed  $value,
-        int    $expire = 0,
-        string $domain = '/',
-        bool   $secure = false
-    ): void
+    public static function setCookie(string $key, mixed $value, array $options = []): void
     {
-        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-            $secure = true;
-        }
-
-        setcookie($key, $value, [
-            'expires' => $expire,
-            'path' => $domain,
-            'secure' => $secure,
+        $defaultOptions = [
+            'expire' => 0,
+            'domain' => '/',
+            'secure' => false,
             'httponly' => true,
             'samesite' => 'Strict'
-        ]);
+        ];
+
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+            $defaultOptions['secure'] = true;
+        }
+
+        $options = array_merge($defaultOptions, $options);
+
+        setcookie($key, $value, $options);
     }
+
 
     /**
      * Remove a value from $_COOKIE

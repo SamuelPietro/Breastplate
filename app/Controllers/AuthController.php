@@ -47,7 +47,7 @@ class AuthController
                 $this->webHelper->setSession('usr_name', $user['name']);
                 $this->webHelper->setSession('usr_email', $user['email']);
                 if (!empty($remember)) {
-                    $this->webHelper->setCookie('remember', $user['id'], time() + 7 * 24 * 3600);
+                    $this->webHelper->setCookie('remember', $user['id'], ['expire' => time() + 7 * 24 * 3600]);
                 }
                 $this->webHelper->redirect('/');
             } else {
