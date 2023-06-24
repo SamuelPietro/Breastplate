@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Views;
+namespace Src\Core;
 
 use League\Plates\Engine;
 use Psr\Cache\InvalidArgumentException;
-use Src\Core\Csrf;
-use Src\Core\WebHelper;
 use Src\Extensions\Base64Extension;
 use Src\Extensions\FormatTextExtension;
 use Src\Extensions\FormatTimestampExtension;
