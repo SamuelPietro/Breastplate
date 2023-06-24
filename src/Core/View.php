@@ -24,7 +24,7 @@ class View
 
     public function __construct()
     {
-        $this->plates = new Engine(__DIR__);
+        $this->plates = new Engine(VIEWS_PATH);
         $this->csrf = new Csrf();
         $this->plates->addFolder('default', __DIR__ . '/');
         $this->plates->addData([
