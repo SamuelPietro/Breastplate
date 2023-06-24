@@ -16,12 +16,34 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
  */
 class View
 {
+    /**
+     * @var Engine
+     */
     private Engine $plates;
-    private Csrf $csrf;
-    private WebHelper $webHelper;
-    private FilesystemAdapter $cache;
-    private string $templatesDir;
 
+    /**
+     * @var Csrf
+     */
+    private Csrf $csrf;
+
+    /**
+     * @var WebHelper
+     */
+    private WebHelper $webHelper;
+
+    /**
+     * @var FilesystemAdapter
+     */
+    private FilesystemAdapter $cache;
+
+    /**
+     * @var string|false
+     */
+    private string|bool $templatesDir;
+
+    /**
+     * View constructor.
+     */
     public function __construct()
     {
         $this->plates = new Engine(VIEWS_PATH);
@@ -41,9 +63,14 @@ class View
     }
 
     /**
+     * Render the specified template with the provided data.
+     *
+     * @param string $templateName The name of the template file.
+     * @param array  $data         The data to pass to the template.
+     * @return string The rendered template as a string.
      * @throws InvalidArgumentException
      */
-    public function render($templateName, $data = []): string
+    public function render(string $templateName, array $data = []): string
     {
         $templateFile = $this->templatesDir . '/' . $templateName;
         $dataHash = md5(serialize($this->plates->getData()));
