@@ -16,7 +16,7 @@ To install pFrame, simply clone the GitHub repository and follow the setup instr
      git clone https://github.com/SamuelPietro/pframe.git
      # In your terminal run
      composer install
-     php -S localhost:8000 -t public/
+     php -S localhost -t public/
 
 ## Environment variables
 
@@ -25,21 +25,24 @@ environment
 
 Now just access the application in your browser using http://localhost:8000
 
-##
+## Third-party libraries
 
 pFrame uses the following third-party libraries through composer:
 
-- filp/whoops (For code debugging)
-- symfony/dotenv
-- symfony/cache
+- [filp/whoops](https://github.com/filp/whoops) -> For code debugging
+- [symfony/dotenv](https://github.com/symfony/dotenv) -> For environment variables
+- [symfony/cache](https://github.com/symfony/cache) -> For template caching
+- [league/plates](https://github.com/thephpleague/plates) -> For template Engine
 
 These libraries are necessary for the framework to work and will be installed automatically during the pFrame
 installation process.
 
 ## Usage
 
-By using pFrame, you can quickly and neatly create PHP applications following the MVC pattern. This means you can
-separate your views, controllers and models in a clean and maintainable way.
+Using pFrame, you can quickly and neatly create PHP applications following the MVC pattern. That means you can
+separate your views, controllers, and models cleanly and maintainably.
+
+We have within the app directory examples of how to develop with MVC using pFrame.
 
 ## Improvements
 
@@ -52,12 +55,15 @@ information about how to use the framework, its functionalities and how to contr
 
 ## Authors
 
-- [@samuelpietro](https://www.github.com/samuelpietro)
+- [Samuel Pietro](https://www.github.com/samuelpietro)
 
 ## Contributions
 
-All contributions are welcome! If you find bugs, would like to suggest new features, or have any other ideas to improve
-pFrame, just open an issue on GitHub.
+
+All contributions are welcome! If you find bugs, would like to suggest new features or have other ideas for improvement
+Frame, just open an issue on GitHub.
+
+We also appreciate new branches with fixes and new features.
 
 ## Feedback
 
