@@ -18,7 +18,7 @@ class UserModel
      */
     public function __construct(ConnectionInterface $connection)
     {
-        $this->db = $connection;
+        $this->connection = $connection;
     }
 
     /**
@@ -30,7 +30,7 @@ class UserModel
     public function getAll(): array
     {
         try {
-            $query = $this->db->connect()->prepare("SELECT * FROM user");
+            $query = $this->connection->connect()->prepare("SELECT * FROM user");
             $query->execute();
             return $query->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $exception) {
@@ -50,7 +50,7 @@ class UserModel
     public function getById(int $idUser): ?array
     {
         try {
-            $query = $this->db->connect()->prepare("SELECT * FROM user WHERE id = :id");
+            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE id = :id");
             $query->bindParam(':id', $idUser);
             $query->execute();
             return $query->fetch(PDO::FETCH_ASSOC);
@@ -72,7 +72,7 @@ class UserModel
             $name = $data['name'];
             $email = $data['email'];
             $password = password_hash($data['password'], PASSWORD_DEFAULT);
-            $query = $this->db->connect()
+            $query = $this->connection->connect()
                 ->prepare("INSERT INTO user (name, email, password) VALUES (:name, :email, :password)");
             $query->bindParam(':name', $name);
             $query->bindParam(':email', $email);
@@ -97,7 +97,7 @@ class UserModel
             $email = $data['email'] ?? '';
             $password = isset($data['password']) ? password_hash($data['password'], PASSWORD_DEFAULT) : '';
 
-            $query = $this->db->connect()->prepare("UPDATE user SET
+            $query = $this->connection->connect()->prepare("UPDATE user SET
                 name = :name, email = :email, password = :password WHERE id = :id");
             $query->bindParam(':name', $name);
             $query->bindParam(':email', $email);
@@ -119,7 +119,7 @@ class UserModel
     public function delete(int $idUser): bool
     {
         try {
-            $query = $this->db->connect()->prepare("DELETE FROM user WHERE id = :id");
+            $query = $this->connection->connect()->prepare("DELETE FROM user WHERE id = :id");
             $query->bindParam(':id', $idUser);
             $query->execute();
             return $query;
@@ -139,7 +139,7 @@ class UserModel
     public function getByEmail(string $email): array|null
     {
         try {
-            $query = $this->db->connect()->prepare("SELECT * FROM user WHERE email = :email");
+            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE email = :email");
             $query->bindParam(':email', $email);
             $query->execute();
             $result = $query->fetch();
@@ -160,7 +160,7 @@ class UserModel
     public function getByName(string $name): ?array
     {
         try {
-            $query = $this->db->connect()->prepare("SELECT * FROM user WHERE name LIKE :name");
+            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE name LIKE :name");
             $namePattern = '%' . $name . '%';
             $query->bindParam(':name', $namePattern);
             $query->execute();
@@ -182,7 +182,7 @@ class UserModel
     public function getByToken(string $token): ?array
     {
         try {
-            $query = $this->db->connect()->prepare("SELECT * FROM user WHERE token = :token");
+            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE token = :token");
             $query->bindParam(':token', $token);
             $query->execute();
             $result = $query->fetch();
@@ -202,7 +202,7 @@ class UserModel
     public function getCount(): int
     {
         try {
-            $query = $this->db->connect()->prepare("SELECT COUNT(*) FROM user");
+            $query = $this->connection->connect()->prepare("SELECT COUNT(*) FROM user");
             $query->execute();
             $result = $query->fetchColumn();
 
@@ -224,7 +224,7 @@ class UserModel
     public function getPaginatedList(int $limit, int $offset): array
     {
         try {
-            $query = $this->db->connect()->prepare("SELECT * FROM user LIMIT :limit OFFSET :offset");
+            $query = $this->connection->connect()->prepare("SELECT * FROM user LIMIT :limit OFFSET :offset");
             $query->bindParam(':limit', $limit, PDO::PARAM_INT);
             $query->bindParam(':offset', $offset, PDO::PARAM_INT);
             $query->execute();
@@ -248,7 +248,7 @@ class UserModel
     public function setToken(int $idUser, string $token): bool
     {
         try {
-            $statement = $this->db->connect()->prepare("UPDATE user SET token = :token WHERE id = :id");
+            $statement = $this->connection->connect()->prepare("UPDATE user SET token = :token WHERE id = :id");
             $statement->bindParam(":token", $token);
             $statement->bindParam(":id", $idUser);
             $statement->execute();
@@ -271,7 +271,7 @@ class UserModel
     {
         try {
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-            $statement = $this->db->connect()->prepare("UPDATE user SET password = :passwordHash WHERE id = :id");
+            $statement = $this->connection->connect()->prepare("UPDATE user SET password = :passwordHash WHERE id = :id");
             $statement->bindParam(":passwordHash", $passwordHash);
             $statement->bindParam(":id", $idUser);
             $statement->execute();
