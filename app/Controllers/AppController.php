@@ -2,9 +2,9 @@
 
 namespace App\Controllers;
 
-use App\Views\View;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
+use Src\Core\View;
 use Src\Core\WebHelper;
 
 /**
@@ -27,7 +27,8 @@ class AppController
         $this->authController = new AuthController();
 
         if (!$this->authController->isAuthenticated()) {
-            WebHelper::redirect('/login');
+            $webHelper = new WebHelper();
+            $webHelper->redirect('/login');
         }
 
         $this->view = new View();

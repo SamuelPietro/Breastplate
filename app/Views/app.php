@@ -1,2 +1,3 @@
 <?php //$this->layout('templates/base', ['title' => 'Welcome']) ?>
-<h1><?= $_ENV['APP_NAME'] ?></h1>
+<h1>Hello, <?= $_SESSION['usr_name'] ?></h1>
+<h2>Welcome to <?= $_ENV['APP_NAME'] ?></h2>

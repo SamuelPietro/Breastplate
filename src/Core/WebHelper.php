@@ -72,8 +72,7 @@ class WebHelper
         string $key,
         mixed  $default = null,
         int    $filter = FILTER_SANITIZE_FULL_SPECIAL_CHARS
-    ): mixed
-    {
+    ): mixed {
         $value = $_REQUEST[$key] ?? $default;
         return filter_var($value, $filter);
     }
@@ -243,5 +242,13 @@ class WebHelper
     public static function isMethod(string $method): bool
     {
         return $_SERVER['REQUEST_METHOD'] === strtoupper($method);
+    }
+
+    /**
+     * Destroys the current session.
+     */
+    public function destroySession(): void
+    {
+        session_destroy();
     }
 }

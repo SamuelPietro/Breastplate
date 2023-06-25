@@ -1,7 +1,9 @@
 <?php $this->layout('templates/base', ['title' => 'Login']) ?>
 <form action="/login" method="post">
-    <?php if (isset($csrf)): echo $csrf['generate']; endif; ?>
-    <?php if (isset($error)):
+    <?php if (isset($csrf)) :
+        echo $csrf['generate'];
+    endif; ?>
+    <?php if (isset($error)) :
         echo $error;
     endif; ?>
 
