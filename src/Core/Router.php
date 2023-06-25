@@ -109,9 +109,9 @@ class Router
 
         if (method_exists($controller, $action)) {
             call_user_func_array([$controller, $action], $params);
-        } else {
-            $this->errorHandler->handleNotFound();
+            return;
         }
+        $this->errorHandler->handleNotFound();
     }
 
     /**
