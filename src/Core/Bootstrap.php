@@ -38,8 +38,8 @@ class Bootstrap
             $this->defineConstants();
             $this->registerErrorHandler();
             $this->loadRoutes();
-        } catch (Exception $e) {
-            $this->handleError($e);
+        } catch (Exception $exception) {
+            $this->handleError($exception);
         }
     }
 
@@ -99,19 +99,19 @@ class Bootstrap
     /**
      * Handles the error by logging and re-throwing the exception.
      *
-     * @param Exception $e The exception to handle.
+     * @param Exception $exception The exception to handle.
      * @throws Exception The re-thrown exception.
      */
-    private function handleError(Exception $e): void
+    private function handleError(Exception $exception): void
     {
-        error_log('Error initializing the application: ' . $e->getMessage());
-        throw $e;
+        error_log('Error initializing the application: ' . $exception->getMessage());
+        throw $exception;
     }
 }
 
 try {
     $bootstrap = new Bootstrap();
     $bootstrap->init();
-} catch (Exception $e) {
-    error_log('Error executing the application: ' . $e->getMessage());
+} catch (Exception $exception) {
+    error_log('Error executing the application: ' . $exception->getMessage());
 }

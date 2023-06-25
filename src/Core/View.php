@@ -66,7 +66,7 @@ class View
      * Render the specified template with the provided data.
      *
      * @param string $templateName The name of the template file.
-     * @param array  $data         The data to pass to the template.
+     * @param array $data The data to pass to the template.
      * @return string The rendered template as a string.
      * @throws InvalidArgumentException
      */
@@ -86,10 +86,7 @@ class View
             $result = $this->plates->render($templateName, $data);
             $cachedResult->set($result);
             $this->cache->save($cachedResult);
-        } else {
-            $result = $cachedResult->get();
         }
-
-        return $result;
+        return $cachedResult->get();
     }
 }

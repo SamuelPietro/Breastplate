@@ -39,8 +39,6 @@ class Routes
         $this->router->addRoute('GET', '/login', 'AuthController', 'login');
         $this->router->addRoute('POST', '/login', 'AuthController', 'login');
         $this->router->addRoute('GET', '/logout', 'AuthController', 'logout');
-
-
     }
 
     /**
@@ -52,14 +50,13 @@ class Routes
      */
     public function run(): void
     {
-
         $method = $_SERVER['REQUEST_METHOD'];
         $path = $_SERVER['REQUEST_URI'];
 
         try {
             $this->router->route($method, $path);
-        } catch (Exception $e) {
-            error_log('Error getting routes ' . $e->getMessage());
+        } catch (Exception $exception) {
+            error_log('Error getting routes ' . $exception->getMessage());
         }
     }
 }
