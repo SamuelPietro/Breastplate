@@ -12,39 +12,44 @@ use Src\Core\WebHelper;
 use Src\Database\Connection;
 
 /**
- * Class AppController
+ * Class AuthController
  *
  * This class is used to manage users and auth operations.
  */
 class AuthController
 {
     /**
-     * @var View
+     * @var View The view object.
      */
     private View $view;
+
     /**
-     * @var UserModel
+     * @var UserModel The user model object.
      */
     private UserModel $userModel;
+
     /**
-     * @var WebHelper
+     * @var WebHelper The web helper object.
      */
     private WebHelper $webHelper;
+
     /**
-     * @var Csrf
+     * @var Csrf The CSRF object.
      */
     private Csrf $csrf;
+
     /**
-     * @var Connection
+     * @var Connection The database connection object.
      */
     private Connection $connection;
+
     /**
-     * @var string
+     * @var string The error message.
      */
     private string $error;
 
     /**
-     * Construtor of AuthController
+     * AuthController constructor.
      */
     public function __construct()
     {
@@ -57,6 +62,16 @@ class AuthController
     }
 
     /**
+     * Checks if the user is authenticated.
+     *
+     * @return bool
+     */
+    public function isAuthenticated(): bool
+    {
+        return $this->webHelper->getSession('usr_id') !== null;
+    }
+
+    /**
      * Renders the login page or handles the login process for POST requests.
      *
      * @throws InvalidArgumentException
@@ -66,11 +81,24 @@ class AuthController
     {
         if ($this->webHelper->isMethod('post')) {
             $this->handlePostRequest();
+            return;
         }
 
         $error = $this->getError();
         echo $this->view->render('auth/login', ['error' => $error]);
     }
+
+    /**
+     * Logs out the user by removing the session and redirecting to the login page.
+     */
+    #[NoReturn] public function logout(): void
+    {
+        $this->webHelper->removeSession('usr_id');
+        $this->webHelper->removeSession('usr_name');
+        $this->webHelper->destroySession();
+        $this->webHelper->redirect('/login');
+    }
+
 
     /**
      * Handles the login process for POST requests.
@@ -97,6 +125,7 @@ class AuthController
             $this->setSession($user);
             $this->handleRememberOption($user);
             $this->webHelper->redirect('/');
+            return;
         }
 
         $this->setError('The provided data is invalid. Please check your credentials and try again.');
@@ -105,20 +134,21 @@ class AuthController
     /**
      * Handles the "remember me" option and sets the remember cookie if selected.
      *
-     * @param array $user
+     * @param array $user The user data.
      */
     private function handleRememberOption(array $user): void
     {
         $remember = $this->webHelper->input('remember', false, FILTER_VALIDATE_BOOLEAN);
         if (!empty($remember)) {
-            $this->webHelper->setCookie('remember', $user['id'], ['expire' => time() + 7 * 24 * 3600]);
+            $expires = time() + 7 * 24 * 3600;
+            $this->webHelper->setCookie('remember', $user['id'], ['expires' => $expires]);
         }
     }
 
     /**
      * Sets the user session after successful login.
      *
-     * @param array $user
+     * @param array $user The user data.
      *
      * @throws Exception
      */
@@ -134,7 +164,7 @@ class AuthController
      * @throws InvalidArgumentException
      * @throws Exception
      */
-    public function reset(): void
+    public function forgotPassword(): void
     {
         $error = null;
 
@@ -145,18 +175,20 @@ class AuthController
             if ($user) {
                 $token = base64_encode(bin2hex(random_bytes(8)) . time());
                 $this->userModel->setToken($user['id'], $token);
-                echo $this->view->render('auth/reset', ['error' => $error]);
+                $this->webHelper->redirect("/new-password/{$token}");
+                return;
             } else {
                 $error = 'User not found.';
-                echo $this->view->render('auth/forgotPassword', ['error' => $error]);
             }
         }
+
+        echo $this->view->render('auth/forgotPassword', ['error' => $error]);
     }
 
     /**
-     * Handles the password reset process and renders the password reset page.
+     * Handles the password reset process and renders the password newPassword page.
      *
-     * @param string $token
+     * @param string $token The reset token.
      *
      * @throws Exception
      * @throws InvalidArgumentException
@@ -168,14 +200,16 @@ class AuthController
 
         if ($this->isTokenExpired($tokenCreationTime, $expirationMinutes)) {
             $this->setError("The time limit to reset your password has expired. Please try again!");
-            $this->webHelper->redirect('/forgotPassword', ['error' => $this->getError()]);
+            $this->webHelper->redirect('/forgot-password', ['error' => $this->getError()]);
+            return;
         }
 
         $user = $this->getUserByToken($token);
 
         if (!$user) {
             $this->setError("Invalid reset link. Please try again!");
-            $this->webHelper->redirect('/forgotPassword', ['error' => $this->getError()]);
+            $this->webHelper->redirect('/forgot-password', ['error' => $this->getError()]);
+            return;
         }
 
         if ($this->webHelper->isMethod('post')) {
@@ -183,37 +217,61 @@ class AuthController
             return;
         }
 
-        echo $this->view->render('auth/reset', ['error' => null]);
+        echo $this->view->render('auth/newPassword', ['error' => null]);
     }
 
+    /**
+     * Checks if the reset token is expired.
+     *
+     * @param int $tokenCreationTime The token creation timestamp.
+     * @param int $expirationMinutes The token expiration time in minutes.
+     *
+     * @return bool
+     */
     private function isTokenExpired(int $tokenCreationTime, int $expirationMinutes): bool
     {
         return time() > ($tokenCreationTime + ($expirationMinutes * 60));
     }
 
-    #[NoReturn]
-    private function handleExpiredToken(): void
+    /**
+     * Handles the case when the reset token is expired.
+     *
+     */
+    #[NoReturn] private function handleExpiredToken(): void
     {
         $this->setError("The time limit to reset your password has expired. Please try again!");
-        $this->webHelper->redirect('/forgotPassword', ['error' => $this->getError()]);
+        $this->webHelper->redirect('/forgot-password', ['error' => $this->getError()]);
     }
 
     /**
+     * Retrieves the user based on the reset token.
+     *
+     * @param string $token The reset token.
+     *
      * @throws Exception
+     *
+     * @return array|null The user data or null if not found.
      */
     private function getUserByToken(string $token): ?array
     {
         return $this->userModel->getByToken(base64_encode($token));
     }
 
-    #[NoReturn]
-    private function handleInvalidToken(): void
+    /**
+     * Handles the case when the reset token is invalid.
+     *
+     */
+    #[NoReturn] private function handleInvalidToken(): void
     {
         $this->setError("Invalid reset link. Please try again!");
-        $this->webHelper->redirect('/forgotPassword', ['error' => $this->getError()]);
+        $this->webHelper->redirect('/forgot-password', ['error' => $this->getError()]);
     }
 
     /**
+     * Processes the password change request.
+     *
+     * @param array $user The user data.
+     *
      * @throws InvalidArgumentException
      * @throws Exception
      */
@@ -231,48 +289,28 @@ class AuthController
             $this->setError("Something went wrong while setting your new password. Please try again!");
         }
 
-        echo $this->view->render('auth/reset', ['error' => $this->getError()]);
+        echo $this->view->render('auth/newPassword', ['error' => $this->getError()]);
     }
 
+    /**
+     * Sets the error message.
+     *
+     * @param string $errorMessage The error message.
+     *
+     * @return void
+     */
     private function setError(string $errorMessage): void
     {
         $this->error = $errorMessage;
     }
 
+    /**
+     * Retrieves the error message.
+     *
+     * @return string|null The error message or null if no error.
+     */
     private function getError(): ?string
     {
         return $this->error;
-    }
-
-
-    /**
-     * Logs out the user by removing the session and redirecting to the login page.
-     */
-    #[NoReturn] public function logout(): void
-    {
-        $this->webHelper->removeSession('usr_id');
-        $this->webHelper->removeSession('usr_name');
-        $this->webHelper->destroySession();
-        $this->webHelper->redirect('/login');
-    }
-
-    /**
-     * Checks if the user is authenticated.
-     *
-     * @return bool
-     */
-    public function isAuthenticated(): bool
-    {
-        return $this->webHelper->getSession('usr_id') !== null;
-    }
-
-    /**
-     * Retrieves the current user's ID.
-     *
-     * @return int|null
-     */
-    public function getCurrentUserId(): ?int
-    {
-        return $this->webHelper->getSession('usr_id');
     }
 }

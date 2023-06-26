@@ -39,6 +39,10 @@ class Routes
         $this->router->addRoute('GET', '/login', 'AuthController', 'login');
         $this->router->addRoute('POST', '/login', 'AuthController', 'login');
         $this->router->addRoute('GET', '/logout', 'AuthController', 'logout');
+        $this->router->addRoute('GET', '/forgot-password', 'AuthController', 'forgotPassword');
+        $this->router->addRoute('POST', '/forgot-password', 'AuthController', 'forgotPassword');
+        $this->router->addRoute('GET', '/new-password/{token}', 'AuthController', 'newPassword');
+        $this->router->addRoute('POST', '/new-password/{token}', 'AuthController', 'newPassword');
     }
 
     /**

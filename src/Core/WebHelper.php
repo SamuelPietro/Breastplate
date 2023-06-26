@@ -131,7 +131,7 @@ class WebHelper
     public static function setCookie(string $key, mixed $value, array $options = []): void
     {
         $defaultOptions = [
-            'expire' => 0,
+            'expires' => 0,
             'domain' => '/',
             'secure' => false,
             'httponly' => true,
