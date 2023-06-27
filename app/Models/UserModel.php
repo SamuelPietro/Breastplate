@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Interfaces\CRUDInterface;
 use Exception;
 use PDO;
 use PDOException;
 use Src\Database\ConnectionInterface;
 
-class UserModel
+class UserModel implements CRUDInterface
 {
     private ConnectionInterface $connection;
 
@@ -43,15 +44,15 @@ class UserModel
     /**
      * Get user by ID.
      *
-     * @param int $idUser The user ID
+     * @param int $id The user ID
      * @return array|null The user data as an associative array, or null if not found
      * @throws Exception If an error occurs while retrieving the user
      */
-    public function getById(int $idUser): ?array
+    public function getById(int $id): ?array
     {
         try {
             $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE id = :id");
-            $query->bindParam(':id', $idUser);
+            $query->bindParam(':id', $id);
             $query->execute();
             return $query->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $exception) {
@@ -86,11 +87,11 @@ class UserModel
     /**
      * Update a user.
      *
-     * @param int $idUser The user ID
+     * @param int $id The user ID
      * @param array $data The updated user data
      * @throws Exception If an error occurs while updating the user
      */
-    public function update(int $idUser, array $data): void
+    public function update(int $id, array $data): void
     {
         try {
             $name = $data['name'] ?? '';
@@ -102,7 +103,7 @@ class UserModel
             $query->bindParam(':name', $name);
             $query->bindParam(':email', $email);
             $query->bindParam(':password', $password);
-            $query->bindParam(':id', $idUser);
+            $query->bindParam(':id', $id);
             $query->execute();
         } catch (PDOException $exception) {
             error_log(sprintf('Database error updating user: %s', $exception->getMessage()));
@@ -112,15 +113,15 @@ class UserModel
     /**
      * Delete a user.
      *
-     * @param int $idUser The user ID
+     * @param int $id The user ID
      * @return bool True if the user is deleted, false otherwise
      * @throws Exception If an error occurs while deleting the user
      */
-    public function delete(int $idUser): bool
+    public function delete(int $id): bool
     {
         try {
             $query = $this->connection->connect()->prepare("DELETE FROM user WHERE id = :id");
-            $query->bindParam(':id', $idUser);
+            $query->bindParam(':id', $id);
             $query->execute();
             return $query->rowCount() > 0;
         } catch (PDOException $exception) {
@@ -152,7 +153,7 @@ class UserModel
     /**
      * Get user by name.
      *
-     * @param string $name The user name
+     * @param string $name The username
      * @return array|null The user data as an associative array, or null if not found
      * @throws Exception If an error occurs while retrieving the user
      */
@@ -234,17 +235,17 @@ class UserModel
     /**
      * Set the token for a user.
      *
-     * @param int $idUser The user ID
+     * @param int $id The user ID
      * @param string $token The token to set
      * @return bool True if the token was set successfully, false otherwise
      * @throws Exception If an error occurs while updating the token
      */
-    public function setToken(int $idUser, string $token): bool
+    public function setToken(int $id, string $token): bool
     {
         try {
             $statement = $this->connection->connect()->prepare("UPDATE user SET token = :token WHERE id = :id");
             $statement->bindParam(":token", $token);
-            $statement->bindParam(":id", $idUser);
+            $statement->bindParam(":id", $id);
             $statement->execute();
             return $statement->rowCount() > 0;
         } catch (PDOException $exception) {
@@ -256,18 +257,18 @@ class UserModel
     /**
      * Change the password for a user.
      *
-     * @param int $idUser The user ID
+     * @param int $id The user ID
      * @param string $password The new password
      * @return bool True if the password was changed successfully, false otherwise
      * @throws Exception If an error occurs while updating the password
      */
-    public function changePassword(int $idUser, string $password): bool
+    public function changePassword(int $id, string $password): bool
     {
         try {
             $passwordHash = password_hash($password, PASSWORD_DEFAULT);
             $statement = $this->connection->connect()->prepare("UPDATE user SET password = :passwordHash WHERE id = :id");
             $statement->bindParam(":passwordHash", $passwordHash);
-            $statement->bindParam(":id", $idUser);
+            $statement->bindParam(":id", $id);
             $statement->execute();
 
             return $statement->rowCount() > 0;
