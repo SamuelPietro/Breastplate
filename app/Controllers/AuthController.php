@@ -9,7 +9,6 @@ use Psr\Cache\InvalidArgumentException;
 use Src\Core\Csrf;
 use Src\Core\View;
 use Src\Core\WebHelper;
-use Src\Database\Connection;
 
 /**
  * Class AuthController
@@ -39,22 +38,21 @@ class AuthController
     private Csrf $csrf;
 
     /**
-     * @var Connection The database connection object.
-     */
-    private Connection $connection;
-
-    /**
      * @var string The error message.
      */
     private string $error;
 
     /**
      * AuthController constructor.
+     *
+     * @param View $view The view object.
+     * @param UserModel $userModel The user model object.
+     * @param WebHelper $webHelper The web helper object.
+     * @param Csrf $csrf The CSRF object.
      */
-    public function __construct(Connection $connection, View $view, UserModel $userModel, WebHelper $webHelper, Csrf $csrf)
+    public function __construct(View $view, UserModel $userModel, WebHelper $webHelper, Csrf $csrf)
     {
         $this->error = '';
-        $this->connection = $connection;
         $this->view = $view;
         $this->userModel = $userModel;
         $this->webHelper = $webHelper;
@@ -64,7 +62,7 @@ class AuthController
     /**
      * Checks if the user is authenticated.
      *
-     * @return bool
+     * @return bool Returns true if the user is authenticated, false otherwise.
      */
     public function isAuthenticated(): bool
     {
@@ -90,6 +88,8 @@ class AuthController
 
     /**
      * Logs out the user by removing the session and redirecting to the login page.
+     *
+     * @return void
      */
     #[NoReturn] public function logout(): void
     {
@@ -135,6 +135,8 @@ class AuthController
      * Handles the "remember me" option and sets the remember cookie if selected.
      *
      * @param array $user The user data.
+     *
+     * @return void
      */
     private function handleRememberOption(array $user): void
     {
@@ -151,6 +153,8 @@ class AuthController
      * @param array $user The user data.
      *
      * @throws Exception
+     *
+     * @return void
      */
     private function setSession(array $user): void
     {
@@ -175,7 +179,7 @@ class AuthController
             if ($user) {
                 $token = bin2hex(random_bytes(8)) . time();
                 $this->userModel->setToken($user['id'], base64_encode($token));
-                $this->webHelper->redirect("/new-password/{$token}");
+                $this->webHelper->redirect("/new-password/$token");
                 return;
             } else {
                 $error = 'User not found.';
@@ -234,16 +238,6 @@ class AuthController
     }
 
     /**
-     * Handles the case when the reset token is expired.
-     *
-     */
-    #[NoReturn] private function handleExpiredToken(): void
-    {
-        $this->setError("The time limit to reset your password has expired. Please try again!");
-        $this->webHelper->redirect('/forgot-password', ['error' => $this->getError()]);
-    }
-
-    /**
      * Retrieves the user based on the reset token.
      *
      * @param string $token The reset token.
@@ -255,16 +249,6 @@ class AuthController
     private function getUserByToken(string $token): ?array
     {
         return $this->userModel->getByToken(base64_encode($token));
-    }
-
-    /**
-     * Handles the case when the reset token is invalid.
-     *
-     */
-    #[NoReturn] private function handleInvalidToken(): void
-    {
-        $this->setError("Invalid reset link. Please try again!");
-        $this->webHelper->redirect('/forgot-password', ['error' => $this->getError()]);
     }
 
     /**

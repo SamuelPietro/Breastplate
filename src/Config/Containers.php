@@ -26,7 +26,7 @@ class Containers
             $userModel = $container->get('UserModel');
             $webHelper = $container->get('WebHelper');
             $csrf = $container->get('Csrf');
-            return new AuthController($connection, $view, $userModel, $webHelper, $csrf);
+            return new AuthController($view, $userModel, $webHelper, $csrf);
         });
 
         $container->bind('AppController', function ($container) {

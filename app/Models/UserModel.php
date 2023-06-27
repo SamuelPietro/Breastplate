@@ -113,7 +113,7 @@ class UserModel
      * Delete a user.
      *
      * @param int $idUser The user ID
-     * @return bool True if the user was deleted successfully, false otherwise
+     * @return bool True if the user is deleted, false otherwise
      * @throws Exception If an error occurs while deleting the user
      */
     public function delete(int $idUser): bool
@@ -122,28 +122,27 @@ class UserModel
             $query = $this->connection->connect()->prepare("DELETE FROM user WHERE id = :id");
             $query->bindParam(':id', $idUser);
             $query->execute();
-            return $query;
+            return $query->rowCount() > 0;
         } catch (PDOException $exception) {
-            error_log(sprintf('Database error on getting user by user id: %s', $exception->getMessage()));
+            error_log(sprintf('Database error deleting user: %s', $exception->getMessage()));
             return false;
         }
     }
 
     /**
-     * Get a user by email.
+     * Get user by email.
      *
      * @param string $email The user email
      * @return array|null The user data as an associative array, or null if not found
      * @throws Exception If an error occurs while retrieving the user
      */
-    public function getByEmail(string $email): array|null
+    public function getByEmail(string $email): ?array
     {
         try {
             $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE email = :email");
             $query->bindParam(':email', $email);
             $query->execute();
-            $result = $query->fetch();
-            return $result ?: null;
+            return $query->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $exception) {
             error_log(sprintf('Database error on getting user by email: %s', $exception->getMessage()));
             return [];
@@ -151,7 +150,7 @@ class UserModel
     }
 
     /**
-     * Get a user by name.
+     * Get user by name.
      *
      * @param string $name The user name
      * @return array|null The user data as an associative array, or null if not found
@@ -160,12 +159,10 @@ class UserModel
     public function getByName(string $name): ?array
     {
         try {
-            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE name LIKE :name");
-            $namePattern = '%' . $name . '%';
-            $query->bindParam(':name', $namePattern);
+            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE name = :name");
+            $query->bindParam(':name', $name);
             $query->execute();
-            $result = $query->fetch();
-            return $result ?: null;
+            return $query->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $exception) {
             error_log(sprintf('Database error on getting user by name: %s', $exception->getMessage()));
             return [];
@@ -173,7 +170,7 @@ class UserModel
     }
 
     /**
-     * Get a user by token.
+     * Get user by token.
      *
      * @param string $token The user token
      * @return array|null The user data as an associative array, or null if not found
@@ -185,28 +182,25 @@ class UserModel
             $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE token = :token");
             $query->bindParam(':token', $token);
             $query->execute();
-            $result = $query->fetch();
-            return $result ?: null;
+            return $query->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $exception) {
             error_log(sprintf('Database error on getting user by token: %s', $exception->getMessage()));
-            return null;
+            return [];
         }
     }
 
     /**
-     * Get the total count of users.
+     * Get the total number of users.
      *
-     * @return int The number of users
+     * @return int The total number of users
      * @throws Exception If an error occurs while retrieving the count
      */
     public function getCount(): int
     {
         try {
-            $query = $this->connection->connect()->prepare("SELECT COUNT(*) FROM user");
+            $query = $this->connection->connect()->prepare("SELECT COUNT(*) as total FROM user");
             $query->execute();
-            $result = $query->fetchColumn();
-
-            return $result ?: 0;
+            return (int)$query->fetch(PDO::FETCH_ASSOC)['total'];
         } catch (PDOException $exception) {
             error_log(sprintf('Database error on getting user count: %s', $exception->getMessage()));
             return 0;
