@@ -58,7 +58,7 @@ class Routes
         $path = $_SERVER['REQUEST_URI'];
 
         try {
-            $this->router->route($method, $path);
+            $this->router->dispatch($method, $path); // Updated method name from `route` to `dispatch`
         } catch (Exception $exception) {
             error_log('Error getting routes ' . $exception->getMessage());
         }

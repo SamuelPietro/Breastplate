@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Src\Core;
 
 use Exception;
+use Psr\Container\ContainerInterface;
 use Src\Exceptions\ErrorHandler;
 use Symfony\Component\Dotenv\Dotenv;
 use Whoops\Handler\PrettyPageHandler;
@@ -17,19 +18,19 @@ class Bootstrap
     private ErrorHandler $errorHandler;
     private Router $router;
     private Routes $routes;
+    private ContainerInterface $container;
 
     /**
      * Initializes the application.
      *
-     * @throws Exception If an error occurs while starting the application.
+     * @param ContainerInterface $container Container of injection dependency
      */
-    public function __construct()
+    public function __construct(ContainerInterface $container)
     {
+        $this->container = $container;
         $this->loadDependencies();
         $this->startSession();
-        $this->errorHandler = new ErrorHandler();
-        $this->router = new Router($this->errorHandler);
-        $this->routes = new Routes($this->router);
+        $this->routes = $this->container->get('Routes');
     }
 
     public function init(): void
@@ -61,8 +62,6 @@ class Bootstrap
      */
     private function loadDependencies(): void
     {
-        require __DIR__ . '/../../vendor/autoload.php';
-
         $dotenv = new Dotenv();
         $dotenv->load(__DIR__ . '/../../.env');
     }
@@ -109,9 +108,3 @@ class Bootstrap
     }
 }
 
-try {
-    $bootstrap = new Bootstrap();
-    $bootstrap->init();
-} catch (Exception $exception) {
-    error_log('Error executing the application: ' . $exception->getMessage());
-}

@@ -1,5 +1,5 @@
 <?php $this->layout('templates/base', ['title' => 'Reset Password']) ?>
-<form action="/new-password" method="post">
+<form method="post">
     <?php if (isset($error)) :
         echo $error;
     endif; ?>

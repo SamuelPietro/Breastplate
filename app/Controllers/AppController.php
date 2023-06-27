@@ -16,22 +16,25 @@ class AppController
 {
     private View $view;
     private AuthController $authController;
+    private WebHelper $webHelper;
 
     /**
      * AppController constructor.
      *
-     * Initializes the controller with an instance of AppModel and View.
+     * Initializes the controller with an instance of AuthController and WebHelper.
+     *
+     * @param AuthController $authController
+     * @param WebHelper $webHelper
      */
-    public function __construct()
+    public function __construct(AuthController $authController, WebHelper $webHelper, View $view)
     {
-        $this->authController = new AuthController();
+        $this->authController = $authController;
+        $this->view = $view;
+        $this->webHelper = $webHelper;
 
         if (!$this->authController->isAuthenticated()) {
-            $webHelper = new WebHelper();
             $webHelper->redirect('/login');
         }
-
-        $this->view = new View();
     }
 
     /**

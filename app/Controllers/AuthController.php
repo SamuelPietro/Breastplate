@@ -51,14 +51,14 @@ class AuthController
     /**
      * AuthController constructor.
      */
-    public function __construct()
+    public function __construct(Connection $connection, View $view, UserModel $userModel, WebHelper $webHelper, Csrf $csrf)
     {
         $this->error = '';
-        $this->connection = new Connection();
-        $this->view = new View();
-        $this->userModel = new UserModel($this->connection);
-        $this->webHelper = new WebHelper();
-        $this->csrf = new Csrf();
+        $this->connection = $connection;
+        $this->view = $view;
+        $this->userModel = $userModel;
+        $this->webHelper = $webHelper;
+        $this->csrf = $csrf;
     }
 
     /**
@@ -173,8 +173,8 @@ class AuthController
             $user = $this->userModel->getByEmail($email);
 
             if ($user) {
-                $token = base64_encode(bin2hex(random_bytes(8)) . time());
-                $this->userModel->setToken($user['id'], $token);
+                $token = bin2hex(random_bytes(8)) . time();
+                $this->userModel->setToken($user['id'], base64_encode($token));
                 $this->webHelper->redirect("/new-password/{$token}");
                 return;
             } else {

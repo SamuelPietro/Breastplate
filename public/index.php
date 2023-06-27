@@ -12,4 +12,17 @@ declare(strict_types=1);
  * The `__DIR__` magic constant returns the directory of the current file, making the path to the `bootstrap.
  *
  **/
-require_once __DIR__ . '/../src/Core/Bootstrap.php';
+
+use Src\Config\Containers;
+use Src\Core\Container;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+try {
+    $container = new Container();
+    $containers = new Containers($container);
+    $bootstrap = $container->get('Bootstrap');
+    $bootstrap->init();
+} catch (Exception $exception) {
+    error_log('Error executing the application: ' . $exception->getMessage());
+}
