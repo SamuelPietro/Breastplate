@@ -12,7 +12,7 @@ interface ConnectionInterface
     /**
      * Get a PDO instance for the database connection.
      *
-     * @return PDO
+     * @return PDO The PDO instance
      */
     public function connect(): PDO;
 

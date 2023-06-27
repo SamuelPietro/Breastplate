@@ -14,8 +14,19 @@ use Src\Core\WebHelper;
  */
 class AppController
 {
+    /**
+     * @var View The view instance.
+     */
     private View $view;
+
+    /**
+     * @var AuthController The authentication controller instance.
+     */
     private AuthController $authController;
+
+    /**
+     * @var WebHelper The web helper instance.
+     */
     private WebHelper $webHelper;
 
     /**
@@ -23,8 +34,9 @@ class AppController
      *
      * Initializes the controller with an instance of AuthController and WebHelper.
      *
-     * @param AuthController $authController
-     * @param WebHelper $webHelper
+     * @param AuthController $authController The authentication controller.
+     * @param WebHelper $webHelper The web helper.
+     * @param View $view The view instance.
      */
     public function __construct(AuthController $authController, WebHelper $webHelper, View $view)
     {

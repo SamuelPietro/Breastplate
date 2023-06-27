@@ -18,6 +18,8 @@ class Routes
 
     /**
      * Constructor.
+     *
+     * @param Router $router The router instance.
      */
     public function __construct(Router $router)
     {
@@ -49,8 +51,7 @@ class Routes
      * Runs the application.
      *
      * @return void
-     * @throws Exception If an error occurs while getting the routes.
-     *
+     * @throws Exception If an error occurs while dispatching the routes.
      */
     public function run(): void
     {
@@ -58,9 +59,9 @@ class Routes
         $path = $_SERVER['REQUEST_URI'];
 
         try {
-            $this->router->dispatch($method, $path); // Updated method name from `route` to `dispatch`
+            $this->router->dispatch($method, $path);
         } catch (Exception $exception) {
-            error_log('Error getting routes ' . $exception->getMessage());
+            error_log('Error dispatching routes: ' . $exception->getMessage());
         }
     }
 }

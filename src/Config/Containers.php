@@ -66,7 +66,9 @@ class Containers
         });
 
         $container->bind('View', function ($container) {
-            return new View();
+            $csrf = $container->get('Csrf');
+            $webHelper = $container->get('WebHelper');
+            return new View($csrf, $webHelper);
         });
 
         $container->bind('Connection', function ($container) {

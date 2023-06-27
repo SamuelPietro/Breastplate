@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Src\Core;
@@ -23,7 +24,7 @@ class Bootstrap
     /**
      * Initializes the application.
      *
-     * @param ContainerInterface $container Container of injection dependency
+     * @param ContainerInterface $container The dependency injection container.
      */
     public function __construct(ContainerInterface $container)
     {
@@ -33,6 +34,13 @@ class Bootstrap
         $this->routes = $this->container->get('Routes');
     }
 
+    /**
+     * Initializes the application.
+     *
+     * This method sets up the necessary dependencies, starts the session, and retrieves the routes from the container.
+     *
+     * @return void
+     */
     public function init(): void
     {
         try {
@@ -45,7 +53,7 @@ class Bootstrap
     }
 
     /**
-     * Sign in if you haven't already.
+     * Starts the session if it hasn't already been started.
      *
      * @return void
      */
@@ -59,6 +67,8 @@ class Bootstrap
     /**
      * Loads project dependencies through Composer's autoloader and loads environment variables
      * from the .env file.
+     *
+     * @return void
      */
     private function loadDependencies(): void
     {
@@ -68,6 +78,8 @@ class Bootstrap
 
     /**
      * Registers the Whoops error handler.
+     *
+     * @return void
      */
     private function registerErrorHandler(): void
     {
@@ -78,6 +90,8 @@ class Bootstrap
 
     /**
      * Defines the BASE_URL and VIEWS_PATH constants.
+     *
+     * @return void
      */
     private function defineConstants(): void
     {
@@ -88,7 +102,8 @@ class Bootstrap
     /**
      * Loads the routes file.
      *
-     * @throws Exception
+     * @throws Exception If an error occurs while loading the routes.
+     * @return void
      */
     private function loadRoutes(): void
     {
@@ -107,4 +122,3 @@ class Bootstrap
         throw $exception;
     }
 }
-

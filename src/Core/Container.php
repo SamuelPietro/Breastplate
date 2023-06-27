@@ -22,8 +22,8 @@ class Container implements ContainerInterface
     /**
      * Registers a dependency in the container.
      *
-     * @param string          $abstract
-     * @param string|Closure|null $concrete
+     * @param string          $abstract The abstract dependency name.
+     * @param string|Closure|null $concrete The concrete dependency name or a Closure to resolve the dependency.
      */
     public function bind(string $abstract, Closure|string $concrete = null): void
     {
@@ -33,8 +33,8 @@ class Container implements ContainerInterface
     /**
      * Retrieves a resolved instance of the dependency.
      *
-     * @param string $id
-     * @return mixed
+     * @param string $id The dependency identifier.
+     * @return mixed The resolved instance of the dependency.
      * @throws Exception If the dependency is not registered in the container.
      */
     public function get(string $id): mixed
@@ -57,8 +57,8 @@ class Container implements ContainerInterface
     /**
      * Checks if a dependency is registered in the container.
      *
-     * @param string $id
-     * @return bool
+     * @param string $id The dependency identifier.
+     * @return bool True if the dependency is registered, false otherwise.
      */
     public function has(string $id): bool
     {
@@ -68,8 +68,8 @@ class Container implements ContainerInterface
     /**
      * Instantiates the given class and resolves its dependencies.
      *
-     * @param string $className
-     * @return mixed
+     * @param string $className The name of the class to instantiate.
+     * @return mixed The instantiated class with resolved dependencies.
      * @throws Exception If the class cannot be instantiated or its dependencies cannot be resolved.
      */
     private function resolveClass(string $className): mixed

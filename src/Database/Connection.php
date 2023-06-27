@@ -35,6 +35,7 @@ class Connection implements ConnectionInterface
     /**
      * ConnectionPool constructor.
      *
+     * @param int $maxConnections The maximum number of connections allowed in the pool
      */
     public function __construct(int $maxConnections = 10)
     {
@@ -54,8 +55,8 @@ class Connection implements ConnectionInterface
     /**
      * Get a PDO instance from the connection pool.
      *
-     * @return PDO
-     * @throws PDOException
+     * @return PDO The PDO instance
+     * @throws PDOException If an error occurs while getting a connection
      */
     public function getConnection(): PDO
     {
@@ -73,7 +74,7 @@ class Connection implements ConnectionInterface
     /**
      * Release a PDO instance back to the connection pool.
      *
-     * @param PDO $connection
+     * @param PDO $connection The PDO instance to release
      */
     public function releaseConnection(PDO $connection): void
     {
@@ -94,7 +95,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the total number of connections in the connection pool.
      *
-     * @return int
+     * @return int The total number of connections
      */
     public function getTotalConnections(): int
     {
@@ -104,8 +105,8 @@ class Connection implements ConnectionInterface
     /**
      * Create a new PDO connection.
      *
-     * @return PDO
-     * @throws PDOException
+     * @return PDO The new PDO connection
+     * @throws PDOException If an error occurs while creating a connection
      */
     private function createConnection(): PDO
     {
@@ -120,8 +121,8 @@ class Connection implements ConnectionInterface
     /**
      * Get a PDO instance for the database connection.
      *
-     * @return PDO
-     * @throws PDOException
+     * @return PDO The PDO instance
+     * @throws PDOException If an error occurs while connecting
      */
     public function connect(): PDO
     {

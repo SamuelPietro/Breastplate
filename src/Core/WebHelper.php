@@ -27,7 +27,6 @@ class WebHelper
         exit;
     }
 
-
     /**
      * Set a value for a given key in $_SESSION
      *
@@ -68,11 +67,8 @@ class WebHelper
      * @param int $filter
      * @return mixed
      */
-    public static function input(
-        string $key,
-        mixed  $default = null,
-        int    $filter = FILTER_SANITIZE_FULL_SPECIAL_CHARS
-    ): mixed {
+    public static function input(string $key, mixed $default = null, int $filter = FILTER_SANITIZE_FULL_SPECIAL_CHARS): mixed
+    {
         $value = $_REQUEST[$key] ?? $default;
         return filter_var($value, $filter);
     }
@@ -146,7 +142,6 @@ class WebHelper
 
         setcookie($key, $value, $options);
     }
-
 
     /**
      * Remove a value from $_COOKIE
