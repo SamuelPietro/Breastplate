@@ -43,11 +43,14 @@ class View
 
     /**
      * View constructor.
+     *
+     * @param Csrf $csrf The CSRF instance.
+     * @param WebHelper $webHelper The WebHelper instance.
      */
-    public function __construct()
+    public function __construct(Csrf $csrf, WebHelper $webHelper)
     {
         $this->plates = new Engine(VIEWS_PATH);
-        $this->csrf = new Csrf();
+        $this->csrf = $csrf;
         $this->plates->addFolder('default', __DIR__ . '/');
         $this->plates->addData([
             'timestamp' => time(),
@@ -57,7 +60,7 @@ class View
         $this->plates->loadExtension(new FormatTimestampExtension());
         $this->plates->loadExtension(new Base64Extension());
 
-        $this->webHelper = new WebHelper();
+        $this->webHelper = $webHelper;
         $this->cache = new FilesystemAdapter();
         $this->templatesDir = realpath(__DIR__ . '/../Views');
     }
@@ -87,6 +90,7 @@ class View
             $cachedResult->set($result);
             $this->cache->save($cachedResult);
         }
+
         return $cachedResult->get();
     }
 }
