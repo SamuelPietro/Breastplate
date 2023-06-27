@@ -18,13 +18,14 @@ interface CRUDInterface
     public function getAll(): array;
 
     /**
-     * Get row by ID.
+     * Get row by field.
      *
-     * @param int $id The data ID
+     * @param string $field The field name to search by (e.g., 'id', 'email', 'name', 'token')
+     * @param string $value The value to search for in the specified field
      * @return array|null The data as an associative array, or null if not found
      * @throws Exception If an error occurs while retrieving the data
      */
-    public function getById(int $id): ?array;
+    public function getByField(string $field, string $value): ?array;
 
     /**
      * Create a new data.

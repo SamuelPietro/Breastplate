@@ -40,23 +40,23 @@ class UserModel implements CRUDInterface
         }
     }
 
-
     /**
-     * Get user by ID.
+     * Get user by field.
      *
-     * @param int $id The user ID
+     * @param string $field The field name to search by (e.g., 'id', 'email', 'name', 'token')
+     * @param string $value The value to search for in the specified field
      * @return array|null The user data as an associative array, or null if not found
      * @throws Exception If an error occurs while retrieving the user
      */
-    public function getById(int $id): ?array
+    public function getByField(string $field, string $value): ?array
     {
         try {
-            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE id = :id");
-            $query->bindParam(':id', $id);
+            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE $field = :value");
+            $query->bindParam(':value', $value);
             $query->execute();
             return $query->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $exception) {
-            error_log(sprintf('Database error on getting user by Id: %s', $exception->getMessage()));
+            error_log(sprintf('Database error on getting user by %s: %s', $field, $exception->getMessage()));
             return [];
         }
     }
@@ -127,66 +127,6 @@ class UserModel implements CRUDInterface
         } catch (PDOException $exception) {
             error_log(sprintf('Database error deleting user: %s', $exception->getMessage()));
             return false;
-        }
-    }
-
-    /**
-     * Get user by email.
-     *
-     * @param string $email The user email
-     * @return array|null The user data as an associative array, or null if not found
-     * @throws Exception If an error occurs while retrieving the user
-     */
-    public function getByEmail(string $email): ?array
-    {
-        try {
-            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE email = :email");
-            $query->bindParam(':email', $email);
-            $query->execute();
-            return $query->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $exception) {
-            error_log(sprintf('Database error on getting user by email: %s', $exception->getMessage()));
-            return [];
-        }
-    }
-
-    /**
-     * Get user by name.
-     *
-     * @param string $name The username
-     * @return array|null The user data as an associative array, or null if not found
-     * @throws Exception If an error occurs while retrieving the user
-     */
-    public function getByName(string $name): ?array
-    {
-        try {
-            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE name = :name");
-            $query->bindParam(':name', $name);
-            $query->execute();
-            return $query->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $exception) {
-            error_log(sprintf('Database error on getting user by name: %s', $exception->getMessage()));
-            return [];
-        }
-    }
-
-    /**
-     * Get user by token.
-     *
-     * @param string $token The user token
-     * @return array|null The user data as an associative array, or null if not found
-     * @throws Exception If an error occurs while retrieving the user
-     */
-    public function getByToken(string $token): ?array
-    {
-        try {
-            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE token = :token");
-            $query->bindParam(':token', $token);
-            $query->execute();
-            return $query->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $exception) {
-            error_log(sprintf('Database error on getting user by token: %s', $exception->getMessage()));
-            return [];
         }
     }
 

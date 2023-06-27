@@ -120,12 +120,11 @@ class AuthController
             return;
         }
 
-        $user = $this->userModel->getByEmail($email);
+        $user = $this->userModel->getByField('email', $email);
         if ($user && password_verify($password, $user['password'])) {
             $this->setSession($user);
             $this->handleRememberOption($user);
             $this->webHelper->redirect('/');
-            return;
         }
 
         $this->setError('The provided data is invalid. Please check your credentials and try again.');
@@ -152,9 +151,9 @@ class AuthController
      *
      * @param array $user The user data.
      *
+     * @return void
      * @throws Exception
      *
-     * @return void
      */
     private function setSession(array $user): void
     {
@@ -174,13 +173,12 @@ class AuthController
 
         if ($this->webHelper->isMethod('post')) {
             $email = $this->webHelper->input('email', '', FILTER_VALIDATE_EMAIL);
-            $user = $this->userModel->getByEmail($email);
+            $user = $this->userModel->getByField('email', $email);
 
             if ($user) {
                 $token = bin2hex(random_bytes(8)) . time();
                 $this->userModel->setToken($user['id'], base64_encode($token));
                 $this->webHelper->redirect("/new-password/$token");
-                return;
             } else {
                 $error = 'User not found.';
             }
@@ -205,7 +203,6 @@ class AuthController
         if ($this->isTokenExpired($tokenCreationTime, $expirationMinutes)) {
             $this->setError("The time limit to reset your password has expired. Please try again!");
             $this->webHelper->redirect('/forgot-password', ['error' => $this->getError()]);
-            return;
         }
 
         $user = $this->getUserByToken($token);
@@ -213,7 +210,6 @@ class AuthController
         if (!$user) {
             $this->setError("Invalid reset link. Please try again!");
             $this->webHelper->redirect('/forgot-password', ['error' => $this->getError()]);
-            return;
         }
 
         if ($this->webHelper->isMethod('post')) {
@@ -242,13 +238,13 @@ class AuthController
      *
      * @param string $token The reset token.
      *
+     * @return array|null The user data or null if not found.
      * @throws Exception
      *
-     * @return array|null The user data or null if not found.
      */
     private function getUserByToken(string $token): ?array
     {
-        return $this->userModel->getByToken(base64_encode($token));
+        return $this->userModel->getByField('token', base64_encode($token));
     }
 
     /**
