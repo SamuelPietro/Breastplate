@@ -1,14 +1,20 @@
-<h1>Login</h1>
+<?php $this->layout('templates/base', ['title' => 'Login']) ?>
 <form action="/login" method="post">
-    <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
-    
-    <?= $error ?>
+    <?php if (isset($csrf)) :
+        echo $csrf['generate'];
+    endif; ?>
+    <?php if (isset($error)) :
+        echo $error;
+    endif; ?>
 
     <label for="email">Email:</label>
     <input type="text" name="email" id="email">
 
     <label for="password">Password:</label>
     <input type="password" name="password" id="password">
+
+    <input type="checkbox" name="remember" id="remember">
+    <label for="remember">Remember:</label>
 
     <input type="submit" value="Login">
 </form>

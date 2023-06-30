@@ -2,261 +2,219 @@
 
 namespace App\Models;
 
+use App\Interfaces\CRUDInterface;
 use Exception;
 use PDO;
 use PDOException;
-use Src\Core\WebHelper;
-use Src\Database\Connection;
+use Src\Database\ConnectionInterface;
 
-/**
- * UserModel class.
- */
-class UserModel extends Connection
+class UserModel implements CRUDInterface
 {
-    private const TABLE = 'users';
-    private PDO $db;
-    private WebHelper $webHelper;
-    
+    private ConnectionInterface $connection;
+
     /**
-     * Class constructor.
+     * UserModel constructor.
+     *
+     * @param ConnectionInterface $connection The database connection
      */
-    public function __construct()
+    public function __construct(ConnectionInterface $connection)
     {
-        parent::__construct();
-        $this->db = Connection::getInstance();
-        $this->webHelper = new WebHelper();
+        $this->connection = $connection;
     }
 
     /**
-     * Get all users from the database
+     * Get all users.
      *
-     * @return array
-     * @throws Exception If an error occurs while fetching the users
+     * @return array An array containing all users
+     * @throws Exception If an error occurs while retrieving the users
      */
     public function getAll(): array
     {
         try {
-            $query = "SELECT * FROM " . self::TABLE;
-            $stmt = $this->db->prepare($query);
-            $stmt->execute();
-
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            throw new Exception("Error while getting users: " . $e->getMessage());
+            $query = $this->connection->connect()->prepare("SELECT * FROM user");
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $exception) {
+            error_log(sprintf('Database error on getting all users: %s', $exception->getMessage()));
+            return [];
         }
     }
 
     /**
-     * Get a user by ID
+     * Get user by field.
      *
-     * @param int $id
-     * @return array|null
-     * @throws Exception
+     * @param string $field The field name to search by (e.g., 'id', 'email', 'name', 'token')
+     * @param string $value The value to search for in the specified field
+     * @return array|null The user data as an associative array, or null if not found
+     * @throws Exception If an error occurs while retrieving the user
      */
-    public function getById(int $id): ?array
+    public function getByField(string $field, string $value): ?array
     {
         try {
-            $query = "SELECT * FROM " . self::TABLE . " WHERE id = :id LIMIT 1";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-            $stmt->execute();
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return empty($result) ? null : $result[0];
-        } catch (PDOException $e) {
-            throw new Exception("Error while getting user: " . $e->getMessage());
+            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE $field = :value");
+            $query->bindParam(':value', $value);
+            $query->execute();
+            return $query->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $exception) {
+            error_log(sprintf('Database error on getting user by %s: %s', $field, $exception->getMessage()));
+            return [];
         }
     }
 
     /**
-     * Create a new user
+     * Create a new user.
      *
-     * @param array $data
-     * @throws Exception
+     * @param array $data The user data
+     * @throws Exception If an error occurs while creating the user
      */
     public function create(array $data): void
     {
         try {
-            if (!$this->webHelper->verifyCsrfToken($data['csrf_token'])) {
-                throw new Exception('Invalid CSRF token.');
-            }
-
             $name = $data['name'];
             $email = $data['email'];
             $password = password_hash($data['password'], PASSWORD_DEFAULT);
-            print_r($data);
-            $query = "INSERT INTO " . self::TABLE . " (name, email, password) VALUES (:name, :email, :password)";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindValue(':name', $name);
-            $stmt->bindValue(':email', $email);
-            $stmt->bindValue(':password', $password);
-            $stmt->execute();
-           
-        } catch (PDOException $e) {
-            throw new Exception("Error while creating user: " . $e->getMessage());
+            $query = $this->connection->connect()
+                ->prepare("INSERT INTO user (name, email, password) VALUES (:name, :email, :password)");
+            $query->bindParam(':name', $name);
+            $query->bindParam(':email', $email);
+            $query->bindParam(':password', $password);
+            $query->execute();
+        } catch (PDOException $exception) {
+            error_log(sprintf('Database error creating user: %s', $exception->getMessage()));
         }
     }
 
     /**
-     * Update a user by ID
+     * Update a user.
      *
-     * @param int $id
-     * @param array $data
-     * @throws Exception
+     * @param int $id The user ID
+     * @param array $data The updated user data
+     * @throws Exception If an error occurs while updating the user
      */
     public function update(int $id, array $data): void
     {
         try {
-            if (!$this->webHelper->verifyCsrfToken($data['csrf_token'])) {
-                throw new Exception('Invalid CSRF token.');
-            }
+            $name = $data['name'] ?? '';
+            $email = $data['email'] ?? '';
+            $password = isset($data['password']) ? password_hash($data['password'], PASSWORD_DEFAULT) : '';
 
-            $name = $data['name'];
-            $email = $data['email'];
-            $password = password_hash($data['password'], PASSWORD_DEFAULT);
-
-            $query = "UPDATE " . self::TABLE . " SET name = :name, email = :email, password = :password WHERE id = :id";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindValue(':name', $name);
-            $stmt->bindValue(':email', $email);
-            $stmt->bindValue(':password', $password);
-            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-            $stmt->execute();
-        } catch (PDOException $e) {
-            throw new Exception("Error while editing user: " . $e->getMessage());
+            $query = $this->connection->connect()->prepare("UPDATE user SET
+                name = :name, email = :email, password = :password WHERE id = :id");
+            $query->bindParam(':name', $name);
+            $query->bindParam(':email', $email);
+            $query->bindParam(':password', $password);
+            $query->bindParam(':id', $id);
+            $query->execute();
+        } catch (PDOException $exception) {
+            error_log(sprintf('Database error updating user: %s', $exception->getMessage()));
         }
     }
 
     /**
-     * Delete a user from the database.
+     * Delete a user.
      *
-     * @param int $id User id to be deleted.
-     *
-     * @return bool True if the user was successfully deleted, false otherwise.
-     *
-     * @throws Exception If an error occurs during the deletion process.
+     * @param int $id The user ID
+     * @return bool True if the user is deleted, false otherwise
+     * @throws Exception If an error occurs while deleting the user
      */
-    public function delete(int $id, $data): bool
+    public function delete(int $id): bool
     {
         try {
-            // Verify CSRF token
-            if (!$this->webHelper->verifyCsrfToken($data['csrf_token'])) {
-                throw new Exception('Invalid CSRF token.');
-            }
-
-            $query = "DELETE FROM users WHERE id = :id";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            throw new Exception("Error while deleting user: " . $e->getMessage());
+            $query = $this->connection->connect()->prepare("DELETE FROM user WHERE id = :id");
+            $query->bindParam(':id', $id);
+            $query->execute();
+            return $query->rowCount() > 0;
+        } catch (PDOException $exception) {
+            error_log(sprintf('Database error deleting user: %s', $exception->getMessage()));
+            return false;
         }
     }
 
     /**
-     * Get a user by email
+     * Get the total number of users.
      *
-     * @param string $email
-     * @return array
-     * @throws Exception
-     */
-    public function getByEmail(string $email): array
-    {
-        try {
-            $query = "SELECT * FROM " . self::TABLE . " WHERE email = :email LIMIT 1";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindValue(':email', $email);
-            $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            throw new Exception("Error while getting user by email: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Get a user by name
-     *
-     * @param string $name
-     * @return array
-     * @throws Exception
-     */
-    public function getByName(string $name): array
-    {
-        try {
-            $query = "SELECT * FROM " . self::TABLE . " WHERE name = :name LIMIT 1";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindValue(':name', $name);
-            $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            throw new Exception("Error while getting user by name: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Get the total count of users
-     *
-     * @return int
-     * @throws Exception
+     * @return int The total number of users
+     * @throws Exception If an error occurs while retrieving the count
      */
     public function getCount(): int
     {
         try {
-            $query = "SELECT COUNT(*) as count FROM " . self::TABLE;
-            $stmt = $this->db->prepare($query);
-            $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-        } catch (PDOException $e) {
-            throw new Exception("Error while getting user count: " . $e->getMessage());
+            $query = $this->connection->connect()->prepare("SELECT COUNT(*) as total FROM user");
+            $query->execute();
+            return (int)$query->fetch(PDO::FETCH_ASSOC)['total'];
+        } catch (PDOException $exception) {
+            error_log(sprintf('Database error on getting user count: %s', $exception->getMessage()));
+            return 0;
         }
     }
 
     /**
-     * Get a paginated list of users
+     * Get a paginated list of users.
      *
-     * @param int $limit
-     * @param int $offset
-     * @return array
-     * @throws Exception
+     * @param int $limit The number of users to retrieve per page
+     * @param int $offset The offset for pagination
+     * @return array An array containing the paginated list of users
+     * @throws Exception If an error occurs while retrieving the list
      */
     public function getPaginatedList(int $limit, int $offset): array
     {
         try {
-            $query = "SELECT * FROM " . self::TABLE . " LIMIT :limit OFFSET :offset";
-            $stmt = $this->db->prepare($query);
-            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            throw new Exception("Error while getting user list: " . $e->getMessage());
+            $query = $this->connection->connect()->prepare("SELECT * FROM user LIMIT :limit OFFSET :offset");
+            $query->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $query->bindParam(':offset', $offset, PDO::PARAM_INT);
+            $query->execute();
+            $result = $query->fetchAll();
+
+            return $result ?: [];
+        } catch (PDOException $exception) {
+            error_log(sprintf('Database error on getting paginated list of users: %s', $exception->getMessage()));
+            return [];
         }
     }
 
     /**
-     * Change the password of the user with the given ID
+     * Set the token for a user.
      *
      * @param int $id The user ID
-     * @param string $password The new password for the user
+     * @param string $token The token to set
+     * @return bool True if the token was set successfully, false otherwise
+     * @throws Exception If an error occurs while updating the token
+     */
+    public function setToken(int $id, string $token): bool
+    {
+        try {
+            $statement = $this->connection->connect()->prepare("UPDATE user SET token = :token WHERE id = :id");
+            $statement->bindParam(":token", $token);
+            $statement->bindParam(":id", $id);
+            $statement->execute();
+            return $statement->rowCount() > 0;
+        } catch (PDOException $exception) {
+            error_log(sprintf('Database error updating token of user: %s', $exception->getMessage()));
+            return false;
+        }
+    }
+
+    /**
+     * Change the password for a user.
+     *
+     * @param int $id The user ID
+     * @param string $password The new password
      * @return bool True if the password was changed successfully, false otherwise
-     * @throws Exception If there is an error changing the password
+     * @throws Exception If an error occurs while updating the password
      */
     public function changePassword(int $id, string $password): bool
     {
-        $csrfToken = $this->webHelper->getCsrfToken();
-        if (!$this->webHelper->verifyCsrfToken($csrfToken)) {
-            throw new Exception("Invalid CSRF token");
-        }
-
-        $query = "UPDATE users SET password = :password WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $stmt->bindValue(':password', $hashedPassword);
-        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-
         try {
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            throw new Exception("Error changing user password: " . $e->getMessage());
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            $statement = $this->connection->connect()->prepare("UPDATE user SET password = :passwordHash WHERE id = :id");
+            $statement->bindParam(":passwordHash", $passwordHash);
+            $statement->bindParam(":id", $id);
+            $statement->execute();
+
+            return $statement->rowCount() > 0;
+        } catch (PDOException $exception) {
+            error_log(sprintf('Database error updating user: %s', $exception->getMessage()));
+            return false;
         }
     }
 }

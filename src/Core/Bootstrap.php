@@ -1,9 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Src\Core;
 
 use Exception;
+use Psr\Container\ContainerInterface;
+use Src\Exceptions\ErrorHandler;
 use Symfony\Component\Dotenv\Dotenv;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
@@ -13,43 +16,72 @@ use Whoops\Run;
  */
 class Bootstrap
 {
+    private ErrorHandler $errorHandler;
+    private Router $router;
+    private Routes $routes;
+    private ContainerInterface $container;
+
     /**
      * Initializes the application.
      *
-     * @throws Exception If an error occurs while starting the application.
+     * @param ContainerInterface $container The dependency injection container.
      */
-    public static function init(): void
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+        $this->loadDependencies();
+        $this->startSession();
+        $this->routes = $this->container->get('Routes');
+    }
+
+    /**
+     * Initializes the application.
+     *
+     * This method sets up the necessary dependencies, starts the session, and retrieves the routes from the container.
+     *
+     * @return void
+     */
+    public function init(): void
     {
         try {
-            self::loadDependencies();
-            WebHelper::startSession();
-            self::registerErrorHandler();
-            self::registerAutoloader();
-            self::defineConstants();
-            self::loadRoutes();
-            self::setCSPHeader();
-        } catch (Exception $e) {
-            error_log('Error initializing the application: ' . $e->getMessage());
-            throw $e;
+            $this->defineConstants();
+            $this->registerErrorHandler();
+            $this->loadRoutes();
+        } catch (Exception $exception) {
+            $this->handleError($exception);
+        }
+    }
+
+    /**
+     * Starts the session if it hasn't already been started.
+     *
+     * @return void
+     */
+    private function startSession(): void
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
         }
     }
 
     /**
      * Loads project dependencies through Composer's autoloader and loads environment variables
      * from the .env file.
+     *
+     * @return void
      */
-    private static function loadDependencies(): void
+    private function loadDependencies(): void
     {
-        require_once __DIR__ . '/../../vendor/autoload.php';
-
         $dotenv = new Dotenv();
         $dotenv->load(__DIR__ . '/../../.env');
     }
 
     /**
      * Registers the Whoops error handler.
+     *
+     * @return void
      */
-    private static function registerErrorHandler(): void
+    private function registerErrorHandler(): void
     {
         $whoops = new Run;
         $whoops->pushHandler(new PrettyPageHandler);
@@ -57,45 +89,36 @@ class Bootstrap
     }
 
     /**
-     * Registers the Autoloader class.
-     */
-    private static function registerAutoloader(): void
-    {
-        $autoloader = new Autoloader();
-        $autoloader->register();
-    }
-
-    /**
      * Defines the BASE_URL and VIEWS_PATH constants.
+     *
+     * @return void
      */
-    private static function defineConstants(): void
+    private function defineConstants(): void
     {
-        define('BASE_URL', getenv('BASE_URL'));
+        define('BASE_URL', $_ENV['BASE_URL']);
         define("VIEWS_PATH", __DIR__ . '/../../app/Views/');
     }
 
     /**
      * Loads the routes file.
-     * @throws Exception
+     *
+     * @throws Exception If an error occurs while loading the routes.
+     * @return void
      */
-    private static function loadRoutes(): void
+    private function loadRoutes(): void
     {
-        $routes = new Routes();
-        $routes->run();
+        $this->routes->run();
     }
 
     /**
-     * Defines the Content-Security-Policy header.
-     * @throws Exception
+     * Handles the error by logging and re-throwing the exception.
+     *
+     * @param Exception $exception The exception to handle.
+     * @throws Exception The re-thrown exception.
      */
-    private static function setCSPHeader(): void
+    private function handleError(Exception $exception): void
     {
-        WebHelper::set_csp_header();
+        error_log('Error initializing the application: ' . $exception->getMessage());
+        throw $exception;
     }
-}
-
-try {
-    Bootstrap::init();
-} catch (Exception $e) {
-    error_log('Error executing the application: ' . $e->getMessage());
 }

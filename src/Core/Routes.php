@@ -18,10 +18,12 @@ class Routes
 
     /**
      * Constructor.
+     *
+     * @param Router $router The router instance.
      */
-    public function __construct()
+    public function __construct(Router $router)
     {
-        $this->router = new Router();
+        $this->router = $router;
         $this->defineRoutes();
     }
 
@@ -35,27 +37,21 @@ class Routes
         // Define routes for AppController.
         $this->router->addRoute('GET', '/', 'AppController', 'index');
 
-        // Define routes for UsersController.
-        $this->router->addRoute('GET', '/users', 'UsersController', 'index');
-        $this->router->addRoute('GET', '/users/show/{id}', 'UsersController', 'show');
-        $this->router->addRoute('GET', '/users/create', 'UsersController', 'create');
-        $this->router->addRoute('POST', '/users/store', 'UsersController', 'store');
-        $this->router->addRoute('GET', '/users/edit/{id}', 'UsersController', 'edit');
-        $this->router->addRoute('POST', '/users/update/{id}', 'UsersController', 'update');
-        $this->router->addRoute('POST', '/users/delete/{id}', 'UsersController', 'delete');
-
         // Define routes for AuthController.
         $this->router->addRoute('GET', '/login', 'AuthController', 'login');
         $this->router->addRoute('POST', '/login', 'AuthController', 'login');
         $this->router->addRoute('GET', '/logout', 'AuthController', 'logout');
+        $this->router->addRoute('GET', '/forgot-password', 'AuthController', 'forgotPassword');
+        $this->router->addRoute('POST', '/forgot-password', 'AuthController', 'forgotPassword');
+        $this->router->addRoute('GET', '/new-password/{token}', 'AuthController', 'newPassword');
+        $this->router->addRoute('POST', '/new-password/{token}', 'AuthController', 'newPassword');
     }
 
     /**
      * Runs the application.
      *
-     * @throws Exception If an error occurs while getting the routes.
-     *
      * @return void
+     * @throws Exception If an error occurs while dispatching the routes.
      */
     public function run(): void
     {
@@ -63,9 +59,9 @@ class Routes
         $path = $_SERVER['REQUEST_URI'];
 
         try {
-            $this->router->route($method, $path);
-        } catch (Exception $e) {
-            throw new Exception("Error getting routes: " . $e->getMessage());
+            $this->router->dispatch($method, $path);
+        } catch (Exception $exception) {
+            error_log('Error dispatching routes: ' . $exception->getMessage());
         }
     }
 }

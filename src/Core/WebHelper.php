@@ -2,67 +2,29 @@
 
 namespace Src\Core;
 
+use DateTime;
 use Exception;
 use JetBrains\PhpStorm\NoReturn;
+
+/**
+ * WebHelper class.
+ *
+ * A helper class for web-related functionality.
+ */
 class WebHelper
 {
     /**
      * Redirect to a given URL
      *
      * @param string $url
+     * @param array $data
      * @return void
      */
-    #[NoReturn]
-    public static function redirect(string $url): void
+    #[NoReturn] public static function redirect(string $url, array $data = []): void
     {
+        self::setSession('redirect_data', $data, 3);
         header("Location: $url");
         exit;
-    }
-
-    /**
-     * Get the current URL
-     *
-     * @return string
-     */
-    public static function currentUrl(): string
-    {
-        return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-    }
-
-    /**
-     * Get the value of a given key from $_GET or $_POST
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public static function input(string $key, mixed $default = null): mixed
-    {
-        return $_REQUEST[$key] ?? $default;
-    }
-
-    /**
-     * Sign in if you haven't already.
-     *
-     * @return void
-     */
-    public static function startSession(): void
-    {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-    }
-    
-    /**
-     * Get the value of a given key from $_SESSION
-     *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
-     */
-    public static function session(string $key, mixed $default = null): mixed
-    {
-        return $_SESSION[$key] ?? $default;
     }
 
     /**
@@ -70,12 +32,47 @@ class WebHelper
      *
      * @param string $key
      * @param mixed $value
+     * @param int|null $expirationTime
      * @return void
      */
-    public static function setSession(string $key, mixed $value): void
+    public static function setSession(string $key, mixed $value, int $expirationTime = null): void
     {
-        $_SESSION[$key] = $value;
+        if ($expirationTime) {
+            $_SESSION[$key] = [
+                'value' => $value,
+                'expiration_time' => time() + $expirationTime
+            ];
+        } else {
+            $_SESSION[$key] = $value;
+        }
     }
+
+    /**
+     * This function checks if the given URL is valid or not.
+     *
+     * @param string $url The URL to be checked.
+     *
+     * @return bool Returns TRUE if the URL is valid and FALSE otherwise.
+     */
+    public static function isUrlValid(string $url): bool
+    {
+        return filter_var($url, FILTER_VALIDATE_URL) !== false;
+    }
+
+    /**
+     * Get the value of a given key from $_GET or $_POST
+     *
+     * @param string $key
+     * @param mixed|null $default
+     * @param int $filter
+     * @return mixed
+     */
+    public static function input(string $key, mixed $default = null, int $filter = FILTER_SANITIZE_FULL_SPECIAL_CHARS): mixed
+    {
+        $value = $_REQUEST[$key] ?? $default;
+        return filter_var($value, $filter);
+    }
+
     /**
      * Returns the value of a key stored in the $_SESSION variable.
      *
@@ -83,11 +80,15 @@ class WebHelper
      * @param mixed|null $default The default value to be returned if the key is not found.
      * @return mixed The value of the key in $_SESSION or the default value provided.
      */
-    public function getSession(string $key, mixed $default = null): mixed
+    public static function getSession(string $key, mixed $default = null): mixed
     {
+        if (isset($_SESSION[$key]['expiration_time']) && time() > $_SESSION[$key]['expiration_time']) {
+            unset($_SESSION[$key]);
+        }
+
         return $_SESSION[$key] ?? $default;
     }
-    
+
     /**
      * Remove a value from $_SESSION
      *
@@ -97,6 +98,10 @@ class WebHelper
     public static function removeSession(string $key): void
     {
         unset($_SESSION[$key]);
+
+        if (empty($_SESSION)) {
+            session_destroy();
+        }
     }
 
     /**
@@ -106,9 +111,9 @@ class WebHelper
      * @param mixed|null $default
      * @return mixed
      */
-    public static function cookie(string $key, mixed $default = null): mixed
+    public static function getCookie(string $key, mixed $default = null): mixed
     {
-        return $_COOKIE[$key] ?? $default;
+        return filter_input(INPUT_COOKIE, $key, FILTER_SANITIZE_SPECIAL_CHARS) ?? $default;
     }
 
     /**
@@ -116,77 +121,111 @@ class WebHelper
      *
      * @param string $key
      * @param mixed $value
-     * @param int $expire
-     * @param string $domain
+     * @param array $options
      * @return void
      */
-    public static function setCookie(string $key, mixed $value, int $expire = 0, string $domain = '/'): void
+    public static function setCookie(string $key, mixed $value, array $options = []): void
     {
-        setcookie($key, $value, $expire, $domain);
+        $defaultOptions = [
+            'expires' => 0,
+            'domain' => '/',
+            'secure' => false,
+            'httponly' => true,
+            'samesite' => 'Strict'
+        ];
+
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+            $defaultOptions['secure'] = true;
+        }
+
+        $options = array_merge($defaultOptions, $options);
+
+        setcookie($key, $value, $options);
     }
 
     /**
      * Remove a value from $_COOKIE
      *
      * @param string $key
+     * @param bool $secure
      * @return void
      */
-    public static function removeCookie(string $key): void
+    public static function removeCookie(string $key, bool $secure = false): void
     {
-        setcookie($key, '', time() - 3600);
-    }
-
-    /**
-     * Sets a content security policy (CSP) and sends it as an HTTP header.
-     *
-     * @return void
-     * @throws Exception if a nonce cannot be generated for use in the content security policy.
-     *
-     */
-    public static function set_csp_header(): void
-    {
-        try {
-            $nonce = bin2hex(random_bytes(16));
-        } catch (Exception $e) {
-            throw new Exception('Unable to generate a nonce for the content security policy.', 0, $e);
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+            $secure = true;
         }
-        $csp = "default-src 'self'; script-src 'self' 'nonce-$nonce'; img-src *; base-uri 'self'; font-src 'self' data:; style-src 'self' 'unsafe-inline'; object-src 'none';";
-        header('Content-Security-Policy: ' . $csp);
+
+        setcookie($key, '', [
+            'expires' => time() - 3600,
+            'path' => '/',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Strict'
+        ]);
     }
 
     /**
-     * Verifies the CSRF token for the current request
+     * Check if a password is strong enough
      *
-     * @param string $csrfToken The CSRF token to be verified
-     * @return bool True if the token is valid, false otherwise
+     * @param string $password The password to check
+     *
+     * @return bool True if the password is strong enough, false otherwise
      */
+    public static function validatePassword(string $password): bool
+    {
+        // Password must be at least 8 characters long
+        if (strlen($password) < 8) {
+            return false;
+        }
+
+        // Password must contain at least one number, one lowercase letter, one uppercase letter, one special character
+        if (!preg_match('/\d/', $password) || !preg_match('/[a-z]/', $password) ||
+            !preg_match('/[A-Z]/', $password) || !preg_match('/[\W_]/', $password)) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
-     * Generates a CSRF token and saves it in the session
+     * Get the current URL
      *
-     * @return string The generated token
+     * @return string
+     */
+    public static function currentUrl(): string
+    {
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'];
+        $uri = $_SERVER['REQUEST_URI'];
+
+        return $protocol . '://' . $host . $uri;
+    }
+
+    /**
+     * Formats a date in the specified format.
+     *
+     * @param string $date The date to be formatted.
+     * @param string $format The desired date format.
+     * @return string The formatted date.
      * @throws Exception
      */
-    public function getCsrfToken(): string
+    public static function formatDate(string $date, string $format): string
     {
-        // Generate a random token
-        $token = bin2hex(random_bytes(32));
-
-        // Save the token in the session
-        $_SESSION['csrf_token'] = $token;
-
-        return $token;
+        $dateTime = new DateTime($date);
+        return $dateTime->format($format);
     }
 
-
     /**
-     * Verifies the CSRF token for the current request
+     * Formats a number with thousands separator and decimal point.
      *
-     * @param string $csrfToken The CSRF token to be verified
-     * @return bool True if the token is valid, false otherwise
+     * @param float $number The number to be formatted.
+     * @param int $decimals The number of decimal places.
+     * @return string The formatted number.
      */
-    public function verifyCsrfToken(string $csrfToken): bool
+    public static function formatNumber(float $number, int $decimals = 2): string
     {
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $csrfToken);
+        return number_format($number, $decimals, ',', '.');
     }
 
     /**
@@ -195,7 +234,16 @@ class WebHelper
      * @param string $method The method to check (e.g. 'GET', 'POST', 'PUT', etc.)
      * @return bool Returns `true` if the current request method is the same as the given method, and `false` otherwise.
      */
-    public function isMethod(string $method): bool {
+    public static function isMethod(string $method): bool
+    {
         return $_SERVER['REQUEST_METHOD'] === strtoupper($method);
+    }
+
+    /**
+     * Destroys the current session.
+     */
+    public function destroySession(): void
+    {
+        session_destroy();
     }
 }

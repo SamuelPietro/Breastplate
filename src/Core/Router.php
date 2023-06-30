@@ -2,89 +2,135 @@
 
 namespace Src\Core;
 
-use Exception;
+use Src\Exceptions\ErrorHandler;
+use Psr\Container\ContainerInterface;
 
 /**
- * The Router class is responsible for handling the routes and dispatching them to the proper controllers and actions.
+ * Class Router
+ * Class responsible for routing requests to registered routes.
  */
 class Router
 {
-    /**
-     * An array of all the defined routes.
-     *
-     * @var array
-     */
     private array $routes = [];
+    private ErrorHandler $errorHandler;
+    private ContainerInterface $container;
 
     /**
-     * Adds a new route to the Router.
+     * Router constructor.
      *
-     * @param string $method      The HTTP method for this route, for example "GET" or "POST".
-     * @param string $path        The URL path for this route.
-     * @param string $controller  The name of the Controller class that this route should trigger.
-     * @param string $action      The name of the action (method) in the Controller class that this route should trigger.
-     *
-     * @return void
+     * @param ErrorHandler         $errorHandler The error handler instance.
+     * @param ContainerInterface   $container    The container of injection dependency.
      */
-    public function addRoute(string $method, string $path, string $controller, string $action): void
+    public function __construct(ErrorHandler $errorHandler, ContainerInterface $container)
     {
-        // Add the route to the routes array
-        $this->routes[] = [
-            'method' => $method,
+        $this->errorHandler = $errorHandler;
+        $this->container = $container;
+    }
+
+    /**
+     * Add a new route to the router.
+     *
+     * @param string $method         The HTTP method (GET, POST, etc.).
+     * @param string $path           The route path.
+     * @param string $controllerName The controller name.
+     * @param string $action         The controller action.
+     */
+    public function addRoute(string $method, string $path, string $controllerName, string $action): void
+    {
+        $this->routes[$method][$path] = [
+            'controller' => $controllerName,
+            'action' => $action,
             'path' => $path,
-            'controller' => $this->toStudlyCaps($controller),
-            'action' => $this->toCamelCase($action),
         ];
     }
 
     /**
-     * Tries to route the incoming request to the proper Controller and action.
+     * Dispatches the request to the appropriate controller action.
      *
-     * @param string $method  The HTTP method of the incoming request.
-     * @param string $path    The URL path of the incoming request.
-     *
-     * @throws Exception If the incoming request cannot be routed to a Controller and action.
-     *
-     * @return void
+     * @param string $method The HTTP method of the request.
+     * @param string $path   The request path.
      */
-    public function route(string $method, string $path): void
+    public function dispatch(string $method, string $path): void
     {
-        foreach ($this->routes as $route) {
-            $routePath = preg_replace('/{(\w+)}/', '(\w+)', $route['path']);
-            if (preg_match("#^$routePath$#", $path, $matches) && $route['method'] == $method) {
-                $controllerClass = "App\Controllers\\" . $route['controller'];
-                $controller = new $controllerClass();
-                $action = $route['action'];
-                array_shift($matches);
-                call_user_func_array([$controller, $action], $matches);
+        $route = $this->findRoute($method, $path);
+
+        if ($route) {
+            $controllerName = $route['controller'];
+
+            // Use the container to resolve the controller instance
+            $controller = $this->container->get($controllerName);
+
+            $action = $route['action'];
+
+            $params = $this->extractRouteParams($route['path'], $path);
+
+            if (method_exists($controller, $action)) {
+                call_user_func_array([$controller, $action], $params);
                 return;
             }
         }
 
-        throw new Exception("Route not found: $method $path");
+        $this->errorHandler->handleNotFound();
     }
 
     /**
-     * Transforms a string to camelCase format.
+     * Find a route that matches the given method and path.
      *
-     * @param string $string  The input string.
+     * @param string $method The HTTP method of the request.
+     * @param string $path   The request path.
      *
-     * @return string The input string transformed to camelCase format.
+     * @return array|null The matched route or null if no route is found.
      */
-    private function toCamelCase(string $string): string
+    private function findRoute(string $method, string $path): ?array
     {
-        return lcfirst($this->toStudlyCaps($string));
+        if (isset($this->routes[$method])) {
+            foreach ($this->routes[$method] as $routePath => $route) {
+                $pattern = $this->getPatternFromRoute($routePath);
+                if (preg_match($pattern, $path)) {
+                    return $route;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
-     * Transforms a string to StudlyCaps format.
+     * Get the regular expression pattern from a route path.
      *
-     * @param string $string  The input string.
+     * @param string $routePath The route path.
      *
-     * @return string The input string transformed to StudlyCaps format.
+     * @return string The regular expression pattern.
      */
-    private function toStudlyCaps(string $string): string
+    private function getPatternFromRoute(string $routePath): string
     {
-        return str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
+        $pattern = preg_replace('/\//', '\\/', $routePath);
+        $pattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<\1>[a-zA-Z0-9_]+)', $pattern);
+        $pattern = '/^' . $pattern . '$/';
+
+        return $pattern;
+    }
+
+    /**
+     * Extract the route parameters from the given path.
+     *
+     * @param string $routePath The route path.
+     * @param string $path      The request path.
+     *
+     * @return array The extracted route parameters.
+     */
+    private function extractRouteParams(string $routePath, string $path): array
+    {
+        $pattern = $this->getPatternFromRoute($routePath);
+        preg_match($pattern, $path, $matches);
+
+        $params = [];
+        foreach ($matches as $key => $value) {
+            if (is_string($key)) {
+                $params[$key] = $value;
+            }
+        }
+
+        return $params;
     }
 }

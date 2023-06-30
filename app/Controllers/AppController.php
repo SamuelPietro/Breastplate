@@ -2,10 +2,10 @@
 
 namespace App\Controllers;
 
-use App\Models\AppModel;
-use App\Views\View;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
+use Src\Core\View;
+use Src\Core\WebHelper;
 
 /**
  * Class AppController
@@ -14,18 +14,39 @@ use Psr\Cache\InvalidArgumentException;
  */
 class AppController
 {
-    private AppModel $model;
+    /**
+     * @var View The view instance.
+     */
     private View $view;
+
+    /**
+     * @var AuthController The authentication controller instance.
+     */
+    private AuthController $authController;
+
+    /**
+     * @var WebHelper The web helper instance.
+     */
+    private WebHelper $webHelper;
 
     /**
      * AppController constructor.
      *
-     * Initializes the controller with an instance of AppModel and View.
+     * Initializes the controller with an instance of AuthController and WebHelper.
+     *
+     * @param AuthController $authController The authentication controller.
+     * @param WebHelper $webHelper The web helper.
+     * @param View $view The view instance.
      */
-    public function __construct()
+    public function __construct(AuthController $authController, WebHelper $webHelper, View $view)
     {
-        $this->model = new AppModel();
-        $this->view = new View();
+        $this->authController = $authController;
+        $this->view = $view;
+        $this->webHelper = $webHelper;
+
+        if (!$this->authController->isAuthenticated()) {
+            $webHelper->redirect('/login');
+        }
     }
 
     /**
@@ -37,11 +58,18 @@ class AppController
      */
     public function index(): void
     {
-        $data = [
-            'title' => 'PFrame',
-            'content' => '',
-        ];
-        $templateNames = ['app'];
-        $this->view->render($templateNames, $data);
+        echo $this->view->render('app');
+    }
+
+    /**
+     * Renders the not found page.
+     *
+     * @return void
+     * @throws Exception
+     * @throws InvalidArgumentException
+     */
+    public function notFound(): void
+    {
+        echo $this->view->render('error/404');
     }
 }

@@ -17,15 +17,17 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=8.0",
-        "ext-pdo": "*",
-        "filp/whoops": "^2.14",
-        "symfony/dotenv": "*",
-        "symfony/cache": "6.3.x-dev"
+      "php": ">=8.1",
+      "ext-pdo": "*",
+      "filp/whoops": "^2.14",
+      "symfony/dotenv": "*",
+      "symfony/cache": "6.3.x-dev",
+      "league/plates": "*"
     },
     "require-dev": {
         "symfony/thanks": "^1.2@dev",
-        "phpunit/phpunit": "10"
+        "phpunit/phpunit": "10",
+        "phpstan/phpstan": "1.10.x-dev"
     },
     "config": {
         "allow-plugins": {
