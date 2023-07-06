@@ -24,7 +24,7 @@ class Containers
         $this->registerCoreComponents($container);
     }
 
-    private function registerControllers(ContainerInterface $container)
+    private function registerControllers(ContainerInterface $container): void
     {
         $container->bind('AuthController', function ($container) {
             $dependencies = [
@@ -46,7 +46,7 @@ class Containers
         });
     }
 
-    private function registerModels(ContainerInterface $container)
+    private function registerModels(ContainerInterface $container): void
     {
         $container->bind('UserModel', function ($container) {
             $connection = $container->get('Connection');
@@ -54,7 +54,7 @@ class Containers
         });
     }
 
-    private function registerCoreComponents(ContainerInterface $container)
+    private function registerCoreComponents(ContainerInterface $container): void
     {
         $container->bind('Bootstrap', function ($container) {
             return new Bootstrap($container);
