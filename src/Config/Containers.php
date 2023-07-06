@@ -19,30 +19,43 @@ class Containers
 {
     public function __construct(ContainerInterface $container)
     {
-        // Controladores
+        $this->registerControllers($container);
+        $this->registerModels($container);
+        $this->registerCoreComponents($container);
+    }
+
+    private function registerControllers(ContainerInterface $container)
+    {
         $container->bind('AuthController', function ($container) {
-            $connection = $container->get('Connection');
-            $view = $container->get('View');
-            $userModel = $container->get('UserModel');
-            $webHelper = $container->get('WebHelper');
-            $csrf = $container->get('Csrf');
-            return new AuthController($view, $userModel, $webHelper, $csrf);
+            $dependencies = [
+                'view' => $container->get('View'),
+                'userModel' => $container->get('UserModel'),
+                'webHelper' => $container->get('WebHelper'),
+                'csrf' => $container->get('Csrf'),
+            ];
+            return new AuthController(...array_values($dependencies));
         });
 
         $container->bind('AppController', function ($container) {
-            $authController = $container->get('AuthController');
-            $webHelper = $container->get('WebHelper');
-            $view = $container->get('View');
-            return new AppController($authController, $webHelper, $view);
+            $dependencies = [
+                'authController' => $container->get('AuthController'),
+                'webHelper' => $container->get('WebHelper'),
+                'view' => $container->get('View'),
+            ];
+            return new AppController(...array_values($dependencies));
         });
+    }
 
-        // Modelos
+    private function registerModels(ContainerInterface $container)
+    {
         $container->bind('UserModel', function ($container) {
             $connection = $container->get('Connection');
             return new UserModel($connection);
         });
+    }
 
-        // Core
+    private function registerCoreComponents(ContainerInterface $container)
+    {
         $container->bind('Bootstrap', function ($container) {
             return new Bootstrap($container);
         });
@@ -66,9 +79,11 @@ class Containers
         });
 
         $container->bind('View', function ($container) {
-            $csrf = $container->get('Csrf');
-            $webHelper = $container->get('WebHelper');
-            return new View($csrf, $webHelper);
+            $dependencies = [
+                'csrf' => $container->get('Csrf'),
+                'webHelper' => $container->get('WebHelper'),
+            ];
+            return new View(...array_values($dependencies));
         });
 
         $container->bind('Connection', function ($container) {
