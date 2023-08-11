@@ -14,6 +14,14 @@ use Src\Database\ConnectionInterface;
 
 class UserModel implements CRUDInterface
 {
+
+    /**
+     * The dependency injection container.
+     *
+     * @var Container
+     */
+    private Container $container;
+
     /**
      * @var ConnectionInterface The ConnectionInterface instance.
      */

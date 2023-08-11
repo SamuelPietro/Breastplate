@@ -17,6 +17,14 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
  */
 class View
 {
+
+    /**
+     * The dependency injection container.
+     *
+     * @var Container
+     */
+    private Container $container;
+
     /**
      * @var Engine
      */

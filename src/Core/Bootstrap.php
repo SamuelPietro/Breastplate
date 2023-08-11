@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Src\Core;
 
-use _PHPStan_a5768e34c\Nette\DI\Container;
+use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
 use Exception;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Src\Exceptions\ErrorHandler;
 use Symfony\Component\Dotenv\Dotenv;
 use Whoops\Handler\PrettyPageHandler;
@@ -28,8 +27,8 @@ class Bootstrap
      * Initializes the application.
      *
      * @param Container $container The dependency injection container.
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws DependencyException
+     * @throws NotFoundException
      */
     public function __construct(Container $container)
     {

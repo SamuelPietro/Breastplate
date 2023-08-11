@@ -17,6 +17,14 @@ use Src\Core\WebHelper;
  */
 class AppController
 {
+
+    /**
+     * The dependency injection container.
+     *
+     * @var Container
+     */
+    private Container $container;
+
     /**
      * @var View The view instance.
      */

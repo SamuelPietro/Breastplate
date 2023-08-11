@@ -22,6 +22,13 @@ class AuthController
 {
 
     /**
+     * The dependency injection container.
+     *
+     * @var Container
+     */
+    private Container $container;
+
+    /**
      * @var View The view object.
      */
     private View $view;
@@ -56,7 +63,7 @@ class AuthController
     public function __construct(Container $container)
     {
         $this->container = $container;
-        $this->error = null;
+        $this->error = '';
         $this->view = $this->container->get(View::class);
         $this->userModel = $this->container->get(UserModel::class);
         $this->webHelper = $this->container->get(WebHelper::class);
