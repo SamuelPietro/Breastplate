@@ -22,7 +22,8 @@
       "filp/whoops": "^2.14",
       "symfony/dotenv": "*",
       "symfony/cache": "6.3.x-dev",
-      "league/plates": "*"
+      "league/plates": "*",
+        "php-di/php-di": "dev-master"
     },
     "require-dev": {
         "symfony/thanks": "^1.2@dev",

@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Src\Core;
 
+use _PHPStan_a5768e34c\Nette\DI\Container;
 use Exception;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Src\Exceptions\ErrorHandler;
 use Symfony\Component\Dotenv\Dotenv;
 use Whoops\Handler\PrettyPageHandler;
@@ -19,19 +22,21 @@ class Bootstrap
     private ErrorHandler $errorHandler;
     private Router $router;
     private Routes $routes;
-    private ContainerInterface $container;
+    private Container $container;
 
     /**
      * Initializes the application.
      *
-     * @param ContainerInterface $container The dependency injection container.
+     * @param Container $container The dependency injection container.
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(Container $container)
     {
         $this->container = $container;
         $this->loadDependencies();
         $this->startSession();
-        $this->routes = $this->container->get('Routes');
+        $this->routes = $this->container->get(Routes::class);
     }
 
     /**

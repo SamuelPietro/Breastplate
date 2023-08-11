@@ -3,23 +3,33 @@
 namespace App\Models;
 
 use App\Interfaces\CRUDInterface;
+use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
 use Exception;
 use PDO;
 use PDOException;
+use Src\Database\Connection;
 use Src\Database\ConnectionInterface;
 
 class UserModel implements CRUDInterface
 {
+    /**
+     * @var ConnectionInterface The ConnectionInterface instance.
+     */
     private ConnectionInterface $connection;
 
     /**
      * UserModel constructor.
      *
-     * @param ConnectionInterface $connection The database connection
+     * @param Container $container The dependency injection container.
+     * @throws DependencyException
+     * @throws NotFoundException
      */
-    public function __construct(ConnectionInterface $connection)
+    public function __construct(Container $container)
     {
-        $this->connection = $connection;
+        $this->container = $container;
+        $this->connection = $container->get(Connection::class);
     }
 
     /**

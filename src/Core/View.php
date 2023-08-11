@@ -2,6 +2,7 @@
 
 namespace Src\Core;
 
+use DI\Container;
 use League\Plates\Engine;
 use Psr\Cache\InvalidArgumentException;
 use Src\Extensions\Base64Extension;
@@ -44,13 +45,13 @@ class View
     /**
      * View constructor.
      *
-     * @param Csrf $csrf The CSRF instance.
-     * @param WebHelper $webHelper The WebHelper instance.
+     * @param Container $container The dependency injection container.
      */
-    public function __construct(Csrf $csrf, WebHelper $webHelper)
+    public function __construct(Container $container)
     {
         $this->plates = new Engine(VIEWS_PATH);
-        $this->csrf = $csrf;
+        $this->container = $container;
+        $this->csrf = $this->container->get(Csrf::class);
         $this->plates->addFolder('default', __DIR__ . '/');
         $this->plates->addData([
             'timestamp' => time(),
@@ -60,7 +61,7 @@ class View
         $this->plates->loadExtension(new FormatTimestampExtension());
         $this->plates->loadExtension(new Base64Extension());
 
-        $this->webHelper = $webHelper;
+        $this->webHelper = $this->container->get(WebHelper::class);
         $this->cache = new FilesystemAdapter();
         $this->templatesDir = realpath(__DIR__ . '/../Views');
     }

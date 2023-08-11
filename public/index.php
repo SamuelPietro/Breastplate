@@ -14,15 +14,14 @@ declare(strict_types=1);
  * @throws Exception If an error occurs during the application execution.
  **/
 
-use Src\Config\Containers;
-use Src\Core\Container;
+use DI\Container;
+use Src\Core\Bootstrap;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 try {
     $container = new Container();
-    $containers = new Containers($container);
-    $bootstrap = $container->get('Bootstrap');
+    $bootstrap = $container->get(Bootstrap::class);
     $bootstrap->init();
 } catch (Exception $exception) {
     error_log('Error executing the application: ' . $exception->getMessage());

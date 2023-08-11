@@ -2,6 +2,11 @@
 
 namespace Src\Core;
 
+use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Src\Exceptions\ErrorHandler;
 use Psr\Container\ContainerInterface;
 
@@ -18,13 +23,16 @@ class Router
     /**
      * Router constructor.
      *
-     * @param ErrorHandler         $errorHandler The error handler instance.
-     * @param ContainerInterface   $container    The container of injection dependency.
+     * @param Container $container The container of injection dependency.
+     * @throws DependencyException
+     * @throws NotFoundException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __construct(ErrorHandler $errorHandler, ContainerInterface $container)
+    public function __construct(Container $container)
     {
-        $this->errorHandler = $errorHandler;
         $this->container = $container;
+        $this->errorHandler = $this->container->get(ErrorHandler::class);
     }
 
     /**

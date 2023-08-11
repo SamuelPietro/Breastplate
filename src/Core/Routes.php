@@ -2,6 +2,9 @@
 
 namespace Src\Core;
 
+use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
 use Exception;
 
 /**
@@ -19,11 +22,14 @@ class Routes
     /**
      * Constructor.
      *
-     * @param Router $router The router instance.
+     * @param Container $container The dependency injection container.
+     * @throws DependencyException
+     * @throws NotFoundException
      */
-    public function __construct(Router $router)
+    public function __construct(Container $container)
     {
-        $this->router = $router;
+        $this->container = $container;
+        $this->router = $this->container->get(Router::class);
         $this->defineRoutes();
     }
 

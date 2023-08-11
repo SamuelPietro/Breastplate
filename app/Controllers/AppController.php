@@ -2,6 +2,9 @@
 
 namespace App\Controllers;
 
+use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
 use Src\Core\View;
@@ -32,20 +35,19 @@ class AppController
     /**
      * AppController constructor.
      *
-     * Initializes the controller with an instance of AuthController and WebHelper.
-     *
-     * @param AuthController $authController The authentication controller.
-     * @param WebHelper $webHelper The web helper.
-     * @param View $view The view instance.
+     * @param Container $container The dependency injection container.
+     * @throws DependencyException
+     * @throws NotFoundException
      */
-    public function __construct(AuthController $authController, WebHelper $webHelper, View $view)
+    public function __construct(Container $container)
     {
-        $this->authController = $authController;
-        $this->view = $view;
-        $this->webHelper = $webHelper;
+        $this->container = $container;
+        $this->authController = $this->container->get(AuthController::class);
+        $this->view = $container->get(View::class);
+        $this->webHelper = $this->container->get(WebHelper::class);
 
         if (!$this->authController->isAuthenticated()) {
-            $webHelper->redirect('/login');
+            $this->webHelper->redirect('/login');
         }
     }
 

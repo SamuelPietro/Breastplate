@@ -3,6 +3,9 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
 use Exception;
 use JetBrains\PhpStorm\NoReturn;
 use Psr\Cache\InvalidArgumentException;
@@ -17,6 +20,7 @@ use Src\Core\WebHelper;
  */
 class AuthController
 {
+
     /**
      * @var View The view object.
      */
@@ -45,18 +49,18 @@ class AuthController
     /**
      * AuthController constructor.
      *
-     * @param View $view The view object.
-     * @param UserModel $userModel The user model object.
-     * @param WebHelper $webHelper The web helper object.
-     * @param Csrf $csrf The CSRF object.
+     * @param Container $container The dependency injection container.
+     * @throws DependencyException
+     * @throws NotFoundException
      */
-    public function __construct(View $view, UserModel $userModel, WebHelper $webHelper, Csrf $csrf)
+    public function __construct(Container $container)
     {
-        $this->error = '';
-        $this->view = $view;
-        $this->userModel = $userModel;
-        $this->webHelper = $webHelper;
-        $this->csrf = $csrf;
+        $this->container = $container;
+        $this->error = null;
+        $this->view = $this->container->get(View::class);
+        $this->userModel = $this->container->get(UserModel::class);
+        $this->webHelper = $this->container->get(WebHelper::class);
+        $this->csrf = $this->container->get(Csrf::class);
     }
 
     /**
