@@ -2,9 +2,11 @@
 
 namespace Src\Database;
 
+use DI\Container;
 use PDO;
 use PDOException;
 use SplQueue;
+use Src\Core\AppConfig;
 
 /**
  * A class for managing a connection pool for database connections.
@@ -37,13 +39,14 @@ class Connection implements ConnectionInterface
      *
      * @param int $maxConnections The maximum number of connections allowed in the pool
      */
-    public function __construct(int $maxConnections = 10)
+    public function __construct(Container $container, int $maxConnections = 10)
     {
+        $config = $container->get(AppConfig::class);
+
         $this->maxConnections = $maxConnections;
         $this->pdoOptions = [
-            'mysql:host=' . $_ENV['DB_HOST'] . ';port=' . $_ENV['DB_PORT'] . ';dbname=' . $_ENV['DB_NAME'],
-            $_ENV['DB_USER'],
-            $_ENV['DB_PASS'],
+            'mysql:host=' . $config->get('DB_HOST') . ';port=' . $config->get('DB_PORT') . ';dbname=' . $config->get('DB_NAME'),
+            $config->get('DB_USER'), $config->get('DB_PASS'),
             [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
