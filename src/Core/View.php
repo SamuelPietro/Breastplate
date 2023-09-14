@@ -64,6 +64,7 @@ class View
         $this->plates->addData([
             'timestamp' => time(),
             'csrf' => ['generate' => $this->csrf->generate()],
+            'config' => $this->container->get(AppConfig::class)
         ]);
         $this->plates->loadExtension(new FormatTextExtension());
         $this->plates->loadExtension(new FormatTimestampExtension());

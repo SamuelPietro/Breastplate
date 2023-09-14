@@ -8,8 +8,6 @@ use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Exception;
-use Src\Exceptions\ErrorHandler;
-use Symfony\Component\Dotenv\Dotenv;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
@@ -20,6 +18,10 @@ class Bootstrap
 {
     private Routes $routes;
     private Container $container;
+    /**
+     * @var mixed|AppConfig
+     */
+    private mixed $config;
 
     /**
      * Initializes the application.
@@ -31,9 +33,10 @@ class Bootstrap
     public function __construct(Container $container)
     {
         $this->container = $container;
-        $this->loadDependencies();
         $this->startSession();
         $this->routes = $this->container->get(Routes::class);
+        $this->config = $this->container->get(AppConfig::class);
+
     }
 
     /**
@@ -67,17 +70,6 @@ class Bootstrap
         }
     }
 
-    /**
-     * Loads project dependencies through Composer's autoloader and loads environment variables
-     * from the .env file.
-     *
-     * @return void
-     */
-    private function loadDependencies(): void
-    {
-        $dotenv = new Dotenv();
-        $dotenv->load(__DIR__ . '/../../.env');
-    }
 
     /**
      * Registers the Whoops error handler.
@@ -98,7 +90,7 @@ class Bootstrap
      */
     private function defineConstants(): void
     {
-        define('BASE_URL', $_ENV['BASE_URL']);
+        define('BASE_URL', $this->config->get('BASE_URL'));
         define("VIEWS_PATH", __DIR__ . '/../../app/Views/');
     }
 
