@@ -3,6 +3,8 @@
 namespace Src\Core;
 
 use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Src\Exceptions\ErrorHandler;
@@ -51,7 +53,9 @@ class Router
      * Dispatches the request to the appropriate controller action.
      *
      * @param string $method The HTTP method of the request.
-     * @param string $path   The request path.
+     * @param string $path The request path.
+     * @throws DependencyException
+     * @throws NotFoundException
      */
     public function dispatch(string $method, string $path): void
     {

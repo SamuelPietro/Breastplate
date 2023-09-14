@@ -46,16 +46,14 @@ class Routes
 
         // Define routes for AppController.
         $this->router->addRoute('GET', '/', AppController::class, 'index');
-        $this->router->addRoute('POST', '/deploy', AutomaticDeployment::class, 'deploy');
-        $this->router->addRoute('GET', '/suporte', AppController::class, 'index');
 
         // Define routes for AuthController.
         $this->router->addRoute('GET', '/login', AuthController::class, 'login');
         $this->router->addRoute('POST', '/login', AuthController::class, 'login');
-        $this->router->addRoute('GET', '/recuperar-senha', AuthController::class, 'forgotPassword');
-        $this->router->addRoute('POST', '/recuperar-senha', AuthController::class, 'forgotPassword');
-        $this->router->addRoute('GET', '/nova-senha/{token}', AuthController::class, 'newPassword');
-        $this->router->addRoute('POST', '/nova-senha/{token}', AuthController::class, 'newPassword');
+        $this->router->addRoute('GET', '/forgot-password', AuthController::class, 'forgotPassword');
+        $this->router->addRoute('POST', '/forgot-password', AuthController::class, 'forgotPassword');
+        $this->router->addRoute('GET', '/new-password/{token}', AuthController::class, 'newPassword');
+        $this->router->addRoute('POST', '/new-password/{token}', AuthController::class, 'newPassword');
         $this->router->addRoute('GET', '/logout', AuthController::class, 'logout');
 
     }

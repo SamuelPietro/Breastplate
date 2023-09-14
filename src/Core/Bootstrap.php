@@ -18,8 +18,6 @@ use Whoops\Run;
  */
 class Bootstrap
 {
-    private ErrorHandler $errorHandler;
-    private Router $router;
     private Routes $routes;
     private Container $container;
 
@@ -44,6 +42,7 @@ class Bootstrap
      * This method sets up the necessary dependencies, starts the session, and retrieves the routes from the container.
      *
      * @return void
+     * @throws Exception
      */
     public function init(): void
     {
