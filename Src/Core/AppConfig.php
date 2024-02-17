@@ -3,6 +3,7 @@
 namespace pFrame\Src\Core;
 
 use Exception;
+use pFrame\Config\Config;
 
 /**
  * Class AppConfig
@@ -22,9 +23,10 @@ class AppConfig
      * @param array $config The configuration settings.
      * @throws Exception
      */
-    public function __construct(array $config)
+    public function __construct()
     {
-        $this->config = $config;
+        $config = new Config();
+        $this->config = $config->get();
         $this->validateConfig();
     }
 
