@@ -235,4 +235,45 @@ class UserModel implements CRUDInterface
             return false;
         }
     }
+
+    /**
+     * Get a user by ID.
+     *
+     * @param int $id The user ID
+     * @return array|null The user data as an associative array, or null if not found
+     * @throws Exception If an error occurs while retrieving the user
+     */
+    public function getById(int $id): ?array
+    {
+        try {
+            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE id = :id");
+            $query->bindParam(':id', $id);
+            $query->execute();
+            return $query->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $exception) {
+            error_log(sprintf('Database error on getting user by id: %s', $exception->getMessage()));
+            return [];
+        }
+    }
+
+    /**
+     * Get all users by field.
+     *
+     * @param string $field The field name to search by (e.g., 'id', 'email', 'name', 'token')
+     * @param string $value The value to search for in the specified field
+     * @return array An array containing all users that match the specified field and value
+     * @throws Exception If an error occurs while retrieving the users
+     */
+    public function getByFieldAll(string $field, string $value): array
+    {
+        try {
+            $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE $field = :value");
+            $query->bindParam(':value', $value);
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $exception) {
+            error_log(sprintf('Database error on getting all users by %s: %s', $field, $exception->getMessage()));
+            return [];
+        }
+    }
 }
