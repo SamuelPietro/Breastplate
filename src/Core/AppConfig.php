@@ -14,72 +14,17 @@ class AppConfig
     /**
      * @var array The configuration settings.
      */
-    private array $config = [];
+    private array $config;
 
     /**
      * AppConfig constructor.
      *
-     * Loads the configuration settings.
+     * @param array $config The configuration settings.
      * @throws Exception
      */
-    public function __construct()
+    public function __construct(array $config)
     {
-        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'];
-
-        $this->config = [
-            # The name of the application
-            'APP_NAME' => 'PFrame',
-
-            # A description of the application
-            'APP_DESC' => 'Um framework PHP usando o padrão MVC',
-
-            # Keywords or tags associated with the application
-            'APP_KEYS' => 'mvc, php, framework',
-
-            # The author or creator of the application
-            'APP_AUTHOR' => 'Samuel Pietro',
-
-            # Flag indicating whether debugging is enabled
-            'DEBUG' => true,
-
-            # The language setting for the application
-            'LANG' => 'en.UTF-8',
-
-            # The language preference for the application
-            'APP_LANGUAGE' => 'english',
-
-            # The base URL of the application
-            'BASE_URL' => $protocol . '://' . $host,
-
-            # Database Configuration
-
-            # The hostname or IP address of the database server
-            'DB_HOST' => 'localhost',
-
-            # The name of the database to connect to
-            'DB_NAME' => 'pframe',
-
-            # The username for the database connection
-            'DB_USER' => 'root',
-
-            # The password for the database connection
-            'DB_PASS' => 'root',
-
-            # The port number for the database connection
-            'DB_PORT' => 3306,
-
-            # The character set for the database connection
-            'DB_CHARSET' => 'utf8mb4',
-
-            # The path to the SSL CA file for secure database connections
-            'DB_SSL_CA_FILE' => '/resources/ssl/database.crt.pem',
-
-            # Flag indicating whether to verify the database server's SSL certificate
-            'DB_VERIFY_CERT' => false,
-        ];
-
-        // Validação das configurações
+        $this->config = $config;
         $this->validateConfig();
     }
 
@@ -132,13 +77,26 @@ class AppConfig
      */
     private function validateConfig(): void
     {
-        $requiredConfig = ['APP_NAME', 'BASE_URL', 'DB_HOST', 'DB_NAME', 'DB_USER', 'DB_PASS'];
-        foreach ($requiredConfig as $key) {
-            if (!isset($this->config[$key]) || empty($this->config[$key])) {
-                $message = "Missing or empty required configuration: $key";
-                error_log($message);
-                throw new Exception($message);
-            }
+        $this->validateRequiredConfig('APP_NAME');
+        $this->validateRequiredConfig('BASE_URL');
+        $this->validateRequiredConfig('DB_HOST');
+        $this->validateRequiredConfig('DB_NAME');
+        $this->validateRequiredConfig('DB_USER');
+        $this->validateRequiredConfig('DB_PASS');
+    }
+
+    /**
+     * Validate a required configuration setting.
+     *
+     * @param string $key The configuration key.
+     * @throws Exception If the configuration is missing or empty.
+     */
+    private function validateRequiredConfig(string $key): void
+    {
+        if (!isset($this->config[$key]) || empty($this->config[$key])) {
+            $message = "Missing or empty required configuration: $key";
+            error_log($message);
+            throw new Exception($message);
         }
     }
 }
