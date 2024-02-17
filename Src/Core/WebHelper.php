@@ -1,6 +1,6 @@
 <?php
 
-namespace Src\Core;
+namespace pFrame\Src\Core;
 
 use DateTime;
 use Exception;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Src\Core;
+namespace pFrame\Src\Core;
 
 use DI\Container;
 use DI\DependencyException;
@@ -91,7 +91,7 @@ class Bootstrap
     private function defineConstants(): void
     {
         define('BASE_URL', $this->config->get('BASE_URL'));
-        define("VIEWS_PATH", __DIR__ . '/../../app/Views/');
+        define("VIEWS_PATH", __DIR__ . '/../../App/Views/');
     }
 
     /**

@@ -1,13 +1,13 @@
 <?php
 
-namespace Src\Core;
+namespace pFrame\Src\Core;
 
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Src\Exceptions\ErrorHandler;
+use pFrame\Src\Exceptions\ErrorHandler;
 
 /**
  * Class Router

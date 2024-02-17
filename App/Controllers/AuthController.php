@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Controllers;
+namespace pFrame\App\Controllers;
 
-use App\Models\UserModel;
+use pFrame\App\Models\UserModel;
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Exception;
 use JetBrains\PhpStorm\NoReturn;
 use Psr\Cache\InvalidArgumentException;
-use Src\Core\Csrf;
-use Src\Core\View;
-use Src\Core\WebHelper;
+use pFrame\Src\Core\Csrf;
+use pFrame\Src\Core\View;
+use pFrame\Src\Core\WebHelper;
 
 /**
  * Class AuthController

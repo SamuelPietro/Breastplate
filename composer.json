@@ -5,8 +5,10 @@
     "license": "GPL-3.0-or-later",
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Src\\": "src/"
+            "pFrame\\": "",
+            "pFrame\\App\\": "App/",
+            "pFrame\\Src\\": "Src/",
+            "pFrame\\Config\\": "Config/"
         }
     },
     "authors": [

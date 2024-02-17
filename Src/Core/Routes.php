@@ -1,9 +1,9 @@
 <?php
 
-namespace Src\Core;
+namespace pFrame\Src\Core;
 
-use App\Controllers\AppController;
-use App\Controllers\AuthController;
+use pFrame\App\Controllers\AppController;
+use pFrame\App\Controllers\AuthController;
 use DI\Container;
 use Exception;
 use Psr\Container\ContainerExceptionInterface;
