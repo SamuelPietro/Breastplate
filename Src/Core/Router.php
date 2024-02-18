@@ -56,6 +56,8 @@ class Router
      * @param string $path The route path.
      * @param string $controllerName The name of the controller.
      * @param string $action The action of the controller.
+     * @param array $middlewares The middlewares for the route.
+     * @return void
      */
     public function addRoute(string $method, string $path, string $controllerName, string $action, array $middlewares = []): void
     {
@@ -67,10 +69,12 @@ class Router
         ];
     }
 
+
     /**
      * Add a new middleware to the router.
      *
      * @param callable $middleware The middleware function.
+     * @return void
      */
     public function addMiddleware(callable $middleware): void
     {
@@ -81,6 +85,7 @@ class Router
      * Run the registered middlewares.
      *
      * @throws Exception If a middleware throws an exception.
+     * @return void
      */
     private function runMiddlewares(): void
     {
@@ -97,6 +102,7 @@ class Router
      * @throws DependencyException
      * @throws NotFoundException
      * @throws Exception
+     * @return void
      */
     public function dispatch(string $method, string $path): void
     {
@@ -104,24 +110,60 @@ class Router
         $route = $this->findRoute($method, $path);
 
         if (!$route) {
-            $this->errorHandler->handleNotFound();
+            $this->handleRouteNotFound();
             return;
         }
-        foreach ($route['middlewares'] as $middleware) {
-            if (is_callable([$middleware, 'handle'])) {
-                call_user_func([$middleware, 'handle']);
-            }
-        }
 
-        $controller = $this->container->get($route['controller']);
-        $action = $route['action'];
-        $params = $this->extractRouteParams($route['path'], $path);
+        $this->runRouteMiddlewares($route['middlewares']);
+        $this->executeControllerAction($route['controller'], $route['action'], $route['path'], $path);
+    }
+
+
+    /**
+     * Handle the case when a route is not found.
+     *
+     * @return void
+     */
+    private function handleRouteNotFound(): void
+    {
+        $this->errorHandler->handleNotFound();
+    }
+
+    /**
+     * Run the middlewares for a specific route.
+     *
+     * @param array $middlewares
+     * @return void
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
+    private function runRouteMiddlewares(array $middlewares): void
+    {
+        foreach ($middlewares as $middleware) {
+            $this->container->get($middleware)->handle();
+        }
+    }
+    /**
+     * Execute the action of a controller.
+     *
+     * @param string $controllerName
+     * @param string $action
+     * @param string $routePath
+     * @param string $path
+     * @return void
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
+    private function executeControllerAction(string $controllerName, string $action, string $routePath, string $path): void
+    {
+        $controller = $this->container->get($controllerName);
 
         if (!method_exists($controller, $action)) {
-            $this->errorHandler->handleNotFound();
+            $this->errorHandler->handleInternalError();
             return;
         }
 
+        $params = $this->extractRouteParams($routePath, $path);
         call_user_func_array([$controller, $action], $params);
     }
 

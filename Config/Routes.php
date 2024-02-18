@@ -8,7 +8,6 @@ use pFrame\App\Controllers\AppController;
 use pFrame\App\Controllers\AuthController;
 use pFrame\App\Middlewares\AuthenticationMiddleware;
 use pFrame\Src\Core\Router;
-use pFrame\Src\Core\WebHelper;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -53,7 +52,7 @@ class Routes
     private function defineRoutes(): void
     {
         // Define routes for AppController.
-        $this->router->addRoute('GET', '/', AppController::class, 'index', [new AuthenticationMiddleware(new WebHelper())]);
+        $this->router->addRoute('GET', '/', AppController::class, 'index', [AuthenticationMiddleware::class]);
 
         // Define routes for AuthController.
         $this->router->addRoute('GET', '/login', AuthController::class, 'login');
