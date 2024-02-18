@@ -55,13 +55,16 @@ class Routes
         $this->router->addRoute('GET', '/', AppController::class, 'index', [AuthenticationMiddleware::class]);
 
         // Define routes for AuthController.
-        $this->router->addRoute('GET', '/login', AuthController::class, 'login');
-        $this->router->addRoute('POST', '/login', AuthController::class, 'login');
-        $this->router->addRoute('GET', '/forgot-password', AuthController::class, 'forgotPassword');
-        $this->router->addRoute('POST', '/forgot-password', AuthController::class, 'forgotPassword');
-        $this->router->addRoute('GET', '/new-password/{token}', AuthController::class, 'newPassword');
-        $this->router->addRoute('POST', '/new-password/{token}', AuthController::class, 'newPassword');
-        $this->router->addRoute('GET', '/logout', AuthController::class, 'logout');
+        $this->router->addGroup('/auth', function () {
+            $this->router->addRoute('GET', '/login', AuthController::class, 'login');
+            $this->router->addRoute('POST', '/login', AuthController::class, 'login');
+            $this->router->addRoute('GET', '/forgot-password', AuthController::class, 'forgotPassword');
+            $this->router->addRoute('POST', '/forgot-password', AuthController::class, 'forgotPassword');
+            $this->router->addRoute('GET', '/new-password/{token}', AuthController::class, 'newPassword');
+            $this->router->addRoute('POST', '/new-password/{token}', AuthController::class, 'newPassword');
+            $this->router->addRoute('GET', '/logout', AuthController::class, 'logout');
+        });
+
     }
 
     /**

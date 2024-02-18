@@ -37,6 +37,11 @@ class Router
     private array $middlewares = [];
 
     /**
+     * @var string The prefix for the group of routes.
+     */
+    private string $groupPrefix = '';
+
+    /**
      * Router constructor.
      *
      * @param Container $container The dependency injection container.
@@ -61,12 +66,31 @@ class Router
      */
     public function addRoute(string $method, string $path, string $controllerName, string $action, array $middlewares = []): void
     {
+        $path = $this->groupPrefix . $path;
+
         $this->routes[$method][$path] = [
             'controller' => $controllerName,
             'action' => $action,
             'path' => $path,
             'middlewares' => $middlewares
         ];
+    }
+
+
+    /**
+     * Define a group of routes with a common prefix.
+     *
+     * @param string $prefix The common prefix for the group of routes.
+     * @param callable $callback The callback in which the routes for the group are defined.
+     */
+    public function addGroup(string $prefix, callable $callback): void
+    {
+        $currentGroupPrefix = $this->groupPrefix;
+        $this->groupPrefix = $currentGroupPrefix . $prefix;
+
+        call_user_func($callback);
+
+        $this->groupPrefix = $currentGroupPrefix;
     }
 
 

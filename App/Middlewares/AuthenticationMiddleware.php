@@ -29,7 +29,7 @@ class AuthenticationMiddleware
     public function handle(): void
     {
         if ($this->webHelper->getSession('usr_id') === null) {
-            $this->webHelper->redirect('/login');
+            $this->webHelper->redirect('/auth/login');
         }
     }
 }
