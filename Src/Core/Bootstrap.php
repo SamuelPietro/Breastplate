@@ -8,6 +8,7 @@ use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Exception;
+use pFrame\Config\Routes;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 

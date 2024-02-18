@@ -51,12 +51,9 @@ class AppController
     {
         $this->container = $container;
         $this->authController = $this->container->get(AuthController::class);
+        $this->authController = $this->container->get(AuthController::class);
         $this->view = $container->get(View::class);
         $this->webHelper = $this->container->get(WebHelper::class);
-
-        if (!$this->authController->isAuthenticated()) {
-            $this->webHelper->redirect('/login');
-        }
     }
 
     /**

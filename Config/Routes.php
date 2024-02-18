@@ -1,11 +1,14 @@
 <?php
 
-namespace pFrame\Src\Core;
+namespace pFrame\Config;
 
-use pFrame\App\Controllers\AppController;
-use pFrame\App\Controllers\AuthController;
 use DI\Container;
 use Exception;
+use pFrame\App\Controllers\AppController;
+use pFrame\App\Controllers\AuthController;
+use pFrame\App\Middlewares\AuthenticationMiddleware;
+use pFrame\Src\Core\Router;
+use pFrame\Src\Core\WebHelper;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -20,6 +23,12 @@ class Routes
      * @var Router
      */
     private Router $router;
+
+    /**
+     * The dependency injection container.
+     *
+     * @var Container
+     */
     private Container $container;
 
     /**
@@ -43,9 +52,8 @@ class Routes
      */
     private function defineRoutes(): void
     {
-
         // Define routes for AppController.
-        $this->router->addRoute('GET', '/', AppController::class, 'index');
+        $this->router->addRoute('GET', '/', AppController::class, 'index', [new AuthenticationMiddleware(new WebHelper())]);
 
         // Define routes for AuthController.
         $this->router->addRoute('GET', '/login', AuthController::class, 'login');
@@ -55,7 +63,6 @@ class Routes
         $this->router->addRoute('GET', '/new-password/{token}', AuthController::class, 'newPassword');
         $this->router->addRoute('POST', '/new-password/{token}', AuthController::class, 'newPassword');
         $this->router->addRoute('GET', '/logout', AuthController::class, 'logout');
-
     }
 
     /**
@@ -73,6 +80,7 @@ class Routes
             $this->router->dispatch($method, $path);
         } catch (Exception $exception) {
             error_log('Error dispatching routes: ' . $exception->getMessage());
+            throw $exception;
         }
     }
 }

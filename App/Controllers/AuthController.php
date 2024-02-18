@@ -70,15 +70,6 @@ class AuthController
         $this->csrf = $this->container->get(Csrf::class);
     }
 
-    /**
-     * Checks if the user is authenticated.
-     *
-     * @return bool Returns true if the user is authenticated, false otherwise.
-     */
-    public function isAuthenticated(): bool
-    {
-        return $this->webHelper->getSession('usr_id') !== null;
-    }
 
     /**
      * Renders the login page or handles the login process for POST requests.
