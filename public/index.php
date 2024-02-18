@@ -15,27 +15,19 @@ declare(strict_types=1);
  **/
 
 use DI\Container;
+use DI\ContainerBuilder;
 use pFrame\Src\Core\Bootstrap;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 try {
-    $container = createContainer();
+    $containerBuilder = new ContainerBuilder();
+    $containerBuilder->useAutowiring(true);
+    $container = $containerBuilder->build();
     $bootstrap = createBootstrap($container);
     $bootstrap->init();
 } catch (Exception $exception) {
     error_log('Error executing the application: ' . $exception->getMessage());
-}
-
-/**
- * Creates a new instance of the dependency injection container.
- *
- * @return Container The dependency injection container.
- * @throws Exception If an error occurs while creating the container.
- */
-function createContainer(): Container
-{
-    return new Container();
 }
 
 /**
