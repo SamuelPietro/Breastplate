@@ -1,19 +1,19 @@
-# pFrame - Quick Start Framework for Free Development
+# Breastplate - Quick Start Framework for Free Development
 
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-![](https://img.shields.io/github/release/SamuelPietro/pframe)
-![](https://img.shields.io/github/issues/SamuelPietro/pframe)
-[![Maintainability](https://api.codeclimate.com/v1/badges/9c8c322765b71a7eb7e4/maintainability)](https://codeclimate.com/github/SamuelPietro/pframe/maintainability)
+![](https://img.shields.io/github/release/SamuelPietro/Breastplate)
+![](https://img.shields.io/github/issues/SamuelPietro/Breastplate)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9c8c322765b71a7eb7e4/maintainability)](https://codeclimate.com/github/SamuelPietro/Breastplate/maintainability)
 
-pFrame is a quickstart framework for PHP development based on best practices and the MVC pattern. With it, you can
+Breastplate is a quickstart framework for PHP development based on best practices and the MVC pattern. With it, you can
 create PHP applications using pure language code, without having to worry about initial configurations and other
 unnecessary aspects.
 
 ## Installation
 
-To install pFrame, simply clone the GitHub repository and follow the setup instructions.
+To install Breastplate, simply clone the GitHub repository and follow the setup instructions.
 
-     git clone https://github.com/SamuelPietro/pframe.git
+     git clone https://github.com/SamuelPietro/Breastplate.git
      # In your terminal run
      composer install
      php -S localhost -t public/
@@ -27,30 +27,30 @@ Now just access the application in your browser using http://localhost:8000
 
 ## Third-party libraries
 
-pFrame uses the following third-party libraries through composer:
+Breastplate uses the following third-party libraries through composer:
 
 - [filp/whoops](https://github.com/filp/whoops) -> For code debugging
 - [symfony/dotenv](https://github.com/symfony/dotenv) -> For environment variables
 - [symfony/cache](https://github.com/symfony/cache) -> For template caching
 - [league/plates](https://github.com/thephpleague/plates) -> For template Engine
 
-These libraries are necessary for the framework to work and will be installed automatically during the pFrame
+These libraries are necessary for the framework to work and will be installed automatically during the Breastplate
 installation process.
 
 ## Usage
 
-Using pFrame, you can quickly and neatly create PHP applications following the MVC pattern. That means you can
+Using Breastplate, you can quickly and neatly create PHP applications following the MVC pattern. That means you can
 separate your views, controllers, and models cleanly and maintainably.
 
-We have within the app directory examples of how to develop with MVC using pFrame.
+We have within the app directory examples of how to develop with MVC using Breastplate.
 
 ## Improvements
 
-Check [changelog](https://github.com/SamuelPietro/pframe/commits/master) for a list of all changes.
+Check [changelog](https://github.com/SamuelPietro/Breastplate/commits/master) for a list of all changes.
 
 ## Documentation
 
-The pFrame documentation is still being developed and is available in the doc's directory. In it, you will find detailed
+The Breastplate documentation is still being developed and is available in the doc's directory. In it, you will find detailed
 information about how to use the framework, its functionalities and how to contribute to the project.
 
 ## Authors
