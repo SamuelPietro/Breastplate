@@ -1,14 +1,14 @@
 <?php
 
-namespace pFrame\App\Controllers;
+namespace breastplate\App\Controllers;
 
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
-use pFrame\Src\Core\View;
-use pFrame\Src\Core\WebHelper;
+use breastplate\Src\Core\View;
+use breastplate\Src\Core\WebHelper;
 
 /**
  * Class AppController

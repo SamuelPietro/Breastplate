@@ -1,12 +1,12 @@
 <?php
 
-namespace pFrame\Src\Database;
+namespace breastplate\Src\Database;
 
 use DI\Container;
 use PDO;
 use PDOException;
 use SplQueue;
-use pFrame\Src\Core\AppConfig;
+use breastplate\Src\Core\AppConfig;
 
 /**
  * A class for managing a connection pool for database connections.

@@ -1,8 +1,8 @@
 <?php
 
-namespace pFrame\App\Middlewares;
+namespace breastplate\App\Middlewares;
 
-use pFrame\Src\Core\WebHelper;
+use breastplate\Src\Core\WebHelper;
 
 class AuthenticationMiddleware
 {

@@ -59,4 +59,3 @@ In order to standardize and scale code versioning, now all commits will be prece
 + docs: Everything related to documentation
 + chore: Regular code maintenance
 
-docker run --rm -it -p 8080:8080 -v C:/MAMP/htdocs/pframe/:/data/pframe/ jetbrains/qodana-php --show-report

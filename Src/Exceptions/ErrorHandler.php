@@ -1,6 +1,6 @@
 <?php
 
-namespace pFrame\Src\Exceptions;
+namespace breastplate\Src\Exceptions;
 
 /**
  * Class ErrorHandler

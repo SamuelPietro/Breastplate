@@ -1,13 +1,13 @@
 <?php
 
-namespace pFrame\Src\Core;
+namespace breastplate\Src\Core;
 
 use DI\Container;
 use League\Plates\Engine;
 use Psr\Cache\InvalidArgumentException;
-use pFrame\Src\Extensions\Base64Extension;
-use pFrame\Src\Extensions\FormatTextExtension;
-use pFrame\Src\Extensions\FormatTimestampExtension;
+use breastplate\Src\Extensions\Base64Extension;
+use breastplate\Src\Extensions\FormatTextExtension;
+use breastplate\Src\Extensions\FormatTimestampExtension;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 /**

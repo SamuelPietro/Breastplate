@@ -1,13 +1,13 @@
 <?php
 
-namespace pFrame\Config;
+namespace breastplate\Config;
 
 use DI\Container;
 use Exception;
-use pFrame\App\Controllers\AppController;
-use pFrame\App\Controllers\AuthController;
-use pFrame\App\Middlewares\AuthenticationMiddleware;
-use pFrame\Src\Core\Router;
+use breastplate\App\Controllers\AppController;
+use breastplate\App\Controllers\AuthController;
+use breastplate\App\Middlewares\AuthenticationMiddleware;
+use breastplate\Src\Core\Router;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 

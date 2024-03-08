@@ -1,6 +1,6 @@
 <?php
 
-namespace pFrame\Src\Extensions;
+namespace breastplate\Src\Extensions;
 
 use League\Plates\Engine;
 use League\Plates\Extension\ExtensionInterface;

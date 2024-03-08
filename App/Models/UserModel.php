@@ -1,16 +1,16 @@
 <?php
 
-namespace pFrame\App\Models;
+namespace breastplate\App\Models;
 
-use pFrame\App\Interfaces\CRUDInterface;
+use breastplate\App\Interfaces\CRUDInterface;
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Exception;
 use PDO;
 use PDOException;
-use pFrame\Src\Database\Connection;
-use pFrame\Src\Database\ConnectionInterface;
+use breastplate\Src\Database\Connection;
+use breastplate\Src\Database\ConnectionInterface;
 
 class UserModel implements CRUDInterface
 {

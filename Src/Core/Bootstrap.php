@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace pFrame\Src\Core;
+namespace breastplate\Src\Core;
 
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Exception;
-use pFrame\Config\Routes;
+use breastplate\Config\Routes;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 

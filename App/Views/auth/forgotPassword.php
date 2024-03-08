@@ -1,5 +1,5 @@
 <?php $this->layout('templates/base', ['title' => 'Forgot Password']) ?>
-<form action="/forgot-password" method="post">
+<form action="/auth/forgot-password" method="post">
     <?php if (isset($error)) :
         echo $error;
     endif; ?>

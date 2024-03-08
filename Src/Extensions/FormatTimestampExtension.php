@@ -1,6 +1,6 @@
 <?php
 
-namespace pFrame\Src\Extensions;
+namespace breastplate\Src\Extensions;
 
 use DateTime;
 use League\Plates\Engine;
