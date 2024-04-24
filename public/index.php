@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 use DI\Container;
 use DI\ContainerBuilder;
-use breastplate\Src\Core\Bootstrap;
+use Breastplate\Src\Core\Bootstrap;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

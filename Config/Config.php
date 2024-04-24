@@ -1,6 +1,6 @@
 <?php
 
-namespace breastplate\Config;
+namespace Breastplate\Config;
 
 /**
  * Class Config

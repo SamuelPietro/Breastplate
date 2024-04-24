@@ -1,6 +1,6 @@
 <?php
 
-namespace breastplate\Src\Core;
+namespace Breastplate\Src\Core;
 
 use DI\Container;
 use DI\DependencyException;
@@ -8,7 +8,7 @@ use DI\NotFoundException;
 use Exception;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use breastplate\Src\Exceptions\ErrorHandler;
+use Breastplate\Src\Exceptions\ErrorHandler;
 
 /**
  * Class Router

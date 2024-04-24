@@ -1,9 +1,9 @@
 <?php
 
-namespace breastplate\Src\Core;
+namespace Breastplate\Src\Core;
 
 use Exception;
-use breastplate\Config\Config;
+use Breastplate\Config\Config;
 
 /**
  * Class AppConfig

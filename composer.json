@@ -5,10 +5,10 @@
   "license": "GPL-3.0-or-later",
   "autoload": {
     "psr-4": {
-      "breastplate\\": "",
-      "breastplate\\App\\": "App/",
-      "breastplate\\Src\\": "Src/",
-      "breastplate\\Config\\": "Config/"
+      "Breastplate\\": "",
+      "Breastplate\\App\\": "App/",
+      "Breastplate\\Src\\": "Src/",
+      "Breastplate\\Config\\": "Config/"
     }
   },
   "authors": [

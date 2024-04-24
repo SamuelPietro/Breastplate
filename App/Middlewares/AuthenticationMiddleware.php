@@ -1,8 +1,8 @@
 <?php
 
-namespace breastplate\App\Middlewares;
+namespace Breastplate\App\Middlewares;
 
-use breastplate\Src\Core\WebHelper;
+use Breastplate\Src\Core\WebHelper;
 
 class AuthenticationMiddleware
 {
