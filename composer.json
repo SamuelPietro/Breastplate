@@ -1,37 +1,39 @@
 {
-    "name": "samuel-pietro/pframe",
-    "description": "Quick Start Framework for Free Development",
-    "type": "project",
-    "license": "GPL-3.0-or-later",
-    "autoload": {
-        "psr-4": {
-            "App\\": "app/",
-            "Src\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Samuel Pietro",
-            "email": "samuel@pietro.dev.br"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-      "php": ">=8.1",
-      "ext-pdo": "*",
-      "filp/whoops": "^2.14",
-      "symfony/dotenv": "*",
-      "symfony/cache": "6.3.x-dev",
-      "league/plates": "*"
-    },
-    "require-dev": {
-        "symfony/thanks": "^1.2@dev",
-        "phpunit/phpunit": "10",
-        "phpstan/phpstan": "1.10.x-dev"
-    },
-    "config": {
-        "allow-plugins": {
-            "symfony/thanks": true
-        }
+  "name": "samuel-pietro/breastplate",
+  "description": "Quick Start Framework for Free Development",
+  "type": "project",
+  "license": "GPL-3.0-or-later",
+  "autoload": {
+    "psr-4": {
+      "breastplate\\": "",
+      "breastplate\\App\\": "App/",
+      "breastplate\\Src\\": "Src/",
+      "breastplate\\Config\\": "Config/"
     }
+  },
+  "authors": [
+    {
+      "name": "Samuel Pietro",
+      "email": "samuel@pietro.dev.br"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=8.1",
+    "ext-pdo": "*",
+    "filp/whoops": "^2.14",
+    "symfony/cache": "6.3.x-dev",
+    "league/plates": "*",
+    "php-di/php-di": "dev-master"
+  },
+  "require-dev": {
+    "symfony/thanks": "^1.2@dev",
+    "phpunit/phpunit": "10",
+    "phpstan/phpstan": "1.10.x-dev"
+  },
+  "config": {
+    "allow-plugins": {
+      "symfony/thanks": true
+    }
+  }
 }
