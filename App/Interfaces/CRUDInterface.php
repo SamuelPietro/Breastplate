@@ -1,6 +1,6 @@
 <?php
 
-namespace breastplate\App\Interfaces;
+namespace Breastplate\App\Interfaces;
 
 use Exception;
 

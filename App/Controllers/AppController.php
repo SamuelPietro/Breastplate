@@ -1,14 +1,14 @@
 <?php
 
-namespace breastplate\App\Controllers;
+namespace Breastplate\App\Controllers;
 
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
-use breastplate\Src\Core\View;
-use breastplate\Src\Core\WebHelper;
+use Breastplate\Src\Core\View;
+use Breastplate\Src\Core\WebHelper;
 
 /**
  * Class AppController

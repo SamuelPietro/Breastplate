@@ -1,6 +1,6 @@
 <?php
 
-namespace breastplate\Src\Database;
+namespace Breastplate\Src\Database;
 
 use PDO;
 
