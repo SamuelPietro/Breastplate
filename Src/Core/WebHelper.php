@@ -16,9 +16,9 @@ class WebHelper
     /**
      * Redirect to a given URL
      *
-     * @param string $url
-     * @param array $data
-     * @return void
+     * @param string $url The URL to redirect to
+     * @param array $data The data to be passed to the redirected page
+     * @return void Redirects to the given URL
      */
     #[NoReturn] public static function redirect(string $url, array $data = []): void
     {
@@ -28,12 +28,12 @@ class WebHelper
     }
 
     /**
-     * Set a value for a given key in $_SESSION
+     * Set a value for a given key in $_SESSION.
      *
-     * @param string $key
-     * @param mixed $value
-     * @param int|null $expirationTime
-     * @return void
+     * @param string $key The key for the session value.
+     * @param mixed $value The value to be stored in the session.
+     * @param int|null $expirationTime The expiration time for the session value in seconds.
+     * @return void Sets the session value.
      */
     public static function setSession(string $key, mixed $value, int $expirationTime = null): void
     {
@@ -62,10 +62,10 @@ class WebHelper
     /**
      * Get the value of a given key from $_GET or $_POST
      *
-     * @param string $key
-     * @param mixed|null $default
-     * @param int $filter
-     * @return mixed
+     * @param string $key The key to retrieve
+     * @param mixed|null $default The default value to return if the key is not found
+     * @param int $filter The filter to apply to the value
+     * @return mixed The value of the key in $_GET or $_POST or the default value provided
      */
     public static function input(string $key, mixed $default = null, int $filter = FILTER_SANITIZE_FULL_SPECIAL_CHARS): mixed
     {
@@ -92,8 +92,8 @@ class WebHelper
     /**
      * Remove a value from $_SESSION
      *
-     * @param string $key
-     * @return void
+     * @param string $key The key to remove
+     * @return void Removes the value from $_SESSION
      */
     public static function removeSession(string $key): void
     {
@@ -107,9 +107,9 @@ class WebHelper
     /**
      * Get the value of a given key from $_COOKIE
      *
-     * @param string $key
-     * @param mixed|null $default
-     * @return mixed
+     * @param string $key The key to retrieve
+     * @param mixed|null $default The default value to return if the key is not found
+     * @return mixed The value of the key in $_COOKIE or the default value provided
      */
     public static function getCookie(string $key, mixed $default = null): mixed
     {
@@ -119,10 +119,10 @@ class WebHelper
     /**
      * Set a value for a given key in $_COOKIE
      *
-     * @param string $key
-     * @param mixed $value
-     * @param array $options
-     * @return void
+     * @param string $key The key for the cookie value
+     * @param mixed $value The value to be stored in the cookie
+     * @param array $options The options for the cookie
+     * @return void Sets the cookie value
      */
     public static function setCookie(string $key, mixed $value, array $options = []): void
     {
@@ -146,9 +146,9 @@ class WebHelper
     /**
      * Remove a value from $_COOKIE
      *
-     * @param string $key
-     * @param bool $secure
-     * @return void
+     * @param string $key The key to remove
+     * @param bool $secure Whether the cookie should only be transmitted over a secure HTTPS connection
+     * @return void Removes the value from $_COOKIE
      */
     public static function removeCookie(string $key, bool $secure = false): void
     {
@@ -191,7 +191,7 @@ class WebHelper
     /**
      * Get the current URL
      *
-     * @return string
+     * @return string The current URL
      */
     public static function currentUrl(): string
     {
@@ -208,7 +208,7 @@ class WebHelper
      * @param string $date The date to be formatted.
      * @param string $format The desired date format.
      * @return string The formatted date.
-     * @throws Exception
+     * @throws Exception If the date is invalid.
      */
     public static function formatDate(string $date, string $format): string
     {

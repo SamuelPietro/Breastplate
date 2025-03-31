@@ -17,7 +17,7 @@ class FormatTimestampExtension implements ExtensionInterface
      * Register the timestamp formatting function in the Plates engine.
      *
      * @param Engine $engine The Plates engine.
-     * @return void
+     * @return void The timestamp formatting function.
      */
     public function register(Engine $engine): void
     {
@@ -31,7 +31,7 @@ class FormatTimestampExtension implements ExtensionInterface
      * @param string|null $format The date and time format (optional).
      * @return string The formatted timestamp.
      */
-    public function formatTimestamp($timestamp, $format = null): string
+    public function formatTimestamp(mixed $timestamp, string $format = null): string
     {
         $locale = $this->getCurrentLocale();
 

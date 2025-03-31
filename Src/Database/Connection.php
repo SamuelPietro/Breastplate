@@ -3,6 +3,8 @@
 namespace Breastplate\Src\Database;
 
 use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
 use PDO;
 use PDOException;
 use SplQueue;
@@ -16,28 +18,31 @@ class Connection implements ConnectionInterface
     /**
      * The maximum number of connections allowed in the pool.
      *
-     * @var int
+     * @var int $maxConnections
      */
     private int $maxConnections;
 
     /**
      * The queue of available connections.
      *
-     * @var SplQueue
+     * @var SplQueue $availableConnections
      */
     private SplQueue $availableConnections;
 
     /**
      * The PDO connection options.
      *
-     * @var array
+     * @var array $pdoOptions
      */
     private array $pdoOptions;
 
     /**
      * ConnectionPool constructor.
      *
+     * @param Container $container The dependency injection container
      * @param int $maxConnections The maximum number of connections allowed in the pool
+     * @throws DependencyException If there is an error with dependency injection
+     * @throws NotFoundException If a dependency is not found
      */
     public function __construct(Container $container, int $maxConnections = 10)
     {

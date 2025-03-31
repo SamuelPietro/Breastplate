@@ -16,7 +16,7 @@ class FormatTextExtension implements ExtensionInterface
      * Register the text formatting function in the Plates engine.
      *
      * @param Engine $engine The Plates engine.
-     * @return void
+     * @return void The text formatting function.
      */
     public function register(Engine $engine): void
     {

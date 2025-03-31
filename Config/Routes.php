@@ -19,14 +19,14 @@ class Routes
     /**
      * The router instance.
      *
-     * @var Router
+     * @var Router $router
      */
     private Router $router;
 
     /**
      * The dependency injection container.
      *
-     * @var Container
+     * @var Container $container
      */
     private Container $container;
 
@@ -34,8 +34,8 @@ class Routes
      * Constructor.
      *
      * @param Container $container The dependency injection container.
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface If there is an error with the container.
+     * @throws NotFoundExceptionInterface If a dependency is not found.
      */
     public function __construct(Container $container)
     {
@@ -47,7 +47,7 @@ class Routes
     /**
      * Defines the routes for the application.
      *
-     * @return void
+     * @return void The routes for the application.
      */
     private function defineRoutes(): void
     {
@@ -70,7 +70,7 @@ class Routes
     /**
      * Runs the application.
      *
-     * @return void
+     * @return void The application.
      * @throws Exception If an error occurs while dispatching the routes.
      */
     public function run(): void

@@ -45,8 +45,8 @@ class Router
      * Router constructor.
      *
      * @param Container $container The dependency injection container.
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface If there is an error with the container.
+     * @throws NotFoundExceptionInterface If a dependency is not found.
      */
     public function __construct(Container $container)
     {
@@ -123,9 +123,9 @@ class Router
      *
      * @param string $method The HTTP method of the request.
      * @param string $path The request path.
-     * @throws DependencyException
-     * @throws NotFoundException
-     * @throws Exception
+     * @throws DependencyException If there is an error with dependency injection.
+     * @throws NotFoundException If a dependency is not found.
+     * @throws Exception If there is an error with the controller action.
      * @return void
      */
     public function dispatch(string $method, string $path): void
@@ -156,10 +156,10 @@ class Router
     /**
      * Run the middlewares for a specific route.
      *
-     * @param array $middlewares
+     * @param array $middlewares The middlewares for the route.
      * @return void
-     * @throws DependencyException
-     * @throws NotFoundException
+     * @throws DependencyException If there is an error with dependency injection.
+     * @throws NotFoundException If a dependency is not found.
      */
     private function runRouteMiddlewares(array $middlewares): void
     {
@@ -170,13 +170,13 @@ class Router
     /**
      * Execute the action of a controller.
      *
-     * @param string $controllerName
-     * @param string $action
-     * @param string $routePath
-     * @param string $path
+     * @param string $controllerName The name of the controller.
+     * @param string $action The action of the controller.
+     * @param string $routePath The path of the route.
+     * @param string $path The request path.
      * @return void
-     * @throws DependencyException
-     * @throws NotFoundException
+     * @throws DependencyException If there is an error with dependency injection.
+     * @throws NotFoundException If a dependency is not found.
      */
     private function executeControllerAction(string $controllerName, string $action, string $routePath, string $path): void
     {

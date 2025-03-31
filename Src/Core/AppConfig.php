@@ -20,8 +20,7 @@ class AppConfig
     /**
      * AppConfig constructor.
      *
-     * @param array $config The configuration settings.
-     * @throws Exception
+     * @throws Exception If a required configuration is missing or invalid.
      */
     public function __construct()
     {

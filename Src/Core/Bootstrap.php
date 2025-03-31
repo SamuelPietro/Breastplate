@@ -28,8 +28,8 @@ class Bootstrap
      * Initializes the application.
      *
      * @param Container $container The dependency injection container.
-     * @throws DependencyException
-     * @throws NotFoundException
+     * @throws DependencyException If there is an error with dependency injection.
+     * @throws NotFoundException If a dependency is not found.
      */
     public function __construct(Container $container)
     {
@@ -45,8 +45,8 @@ class Bootstrap
      *
      * This method sets up the necessary dependencies, starts the session, and retrieves the routes from the container.
      *
-     * @return void
-     * @throws Exception
+     * @return void The initialized application.
+     * @throws Exception If an error occurs while initializing the application.
      */
     public function init(): void
     {
@@ -62,7 +62,7 @@ class Bootstrap
     /**
      * Starts the session if it hasn't already been started.
      *
-     * @return void
+     * @return void The started session.
      */
     private function startSession(): void
     {
@@ -75,7 +75,7 @@ class Bootstrap
     /**
      * Registers the Whoops error handler.
      *
-     * @return void
+     * @return void The registered error handler.
      */
     private function registerErrorHandler(): void
     {

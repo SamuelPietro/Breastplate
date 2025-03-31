@@ -12,7 +12,7 @@ class ErrorHandler
     /**
      * Handles the "Not Found" error.
      *
-     * @return void
+     * @return void The "Not Found" error.
      */
     public function handleNotFound(): void
     {
@@ -23,7 +23,7 @@ class ErrorHandler
     /**
      * Handles the "Internal Server Error" error.
      *
-     * @return void
+     * @return void The "Internal Server Error" error.
      */
     public function handleInternalServerError(): void
     {

@@ -16,7 +16,7 @@ class Base64Extension implements ExtensionInterface
      * Register the base64 encoding and decoding functions in the Plates engine.
      *
      * @param Engine $engine The Plates engine.
-     * @return void
+     * @return void The base64 encoding and decoding functions.
      */
     public function register(Engine $engine): void
     {
@@ -30,7 +30,7 @@ class Base64Extension implements ExtensionInterface
      * @param mixed $blob The data to encode.
      * @return string The base64-encoded data.
      */
-    public function base64Encode($blob): string
+    public function base64Encode(mixed $blob): string
     {
         return base64_encode($blob);
     }

@@ -3,6 +3,8 @@
 namespace Breastplate\Src\Core;
 
 use DI\Container;
+use DI\DependencyException;
+use DI\NotFoundException;
 use League\Plates\Engine;
 use Psr\Cache\InvalidArgumentException;
 use Breastplate\Src\Extensions\Base64Extension;
@@ -54,6 +56,8 @@ class View
      * View constructor.
      *
      * @param Container $container The dependency injection container.
+     * @throws DependencyException If there is an error with dependency injection.
+     * @throws NotFoundException If a dependency is not found.
      */
     public function __construct(Container $container)
     {
@@ -81,7 +85,7 @@ class View
      * @param string $templateName The name of the template file.
      * @param array $data The data to pass to the template.
      * @return string The rendered template as a string.
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException If there is an error with the cache.
      */
     public function render(string $templateName, array $data = []): string
     {
