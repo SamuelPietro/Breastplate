@@ -90,8 +90,8 @@ class View
     public function render(string $templateName, array $data = []): string
     {
         $templateFile = $this->templatesDir . '/' . $templateName;
-        $dataHash = md5(serialize($this->plates->getData()));
-        $cacheKey = 'template_' . md5($templateFile . (file_exists($templateFile) ? filemtime($templateFile) : '') . $dataHash);
+        $dataHash = hash('sha256', serialize($this->plates->getData()));
+        $cacheKey = 'template_' . hash('sha256', $templateFile . (file_exists($templateFile) ? filemtime($templateFile) : '') . $dataHash);
         $cachedResult = $this->cache->getItem($cacheKey);
 
         if (!$cachedResult->isHit()) {
