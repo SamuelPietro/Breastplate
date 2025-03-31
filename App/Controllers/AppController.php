@@ -44,8 +44,8 @@ class AppController
      * AppController constructor.
      *
      * @param Container $container The dependency injection container.
-     * @throws DependencyException
-     * @throws NotFoundException
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If a dependency is not found.
      */
     public function __construct(Container $container)
     {
@@ -58,9 +58,9 @@ class AppController
     /**
      * Renders the application home page.
      *
-     * @return void
-     * @throws Exception
-     * @throws InvalidArgumentException
+     * @return void The rendered page.
+     * @throws Exception If an error occurs while rendering the page.
+     * @throws InvalidArgumentException If an invalid argument is passed.
      */
     public function index(): void
     {
@@ -70,9 +70,9 @@ class AppController
     /**
      * Renders the not found page.
      *
-     * @return void
-     * @throws Exception
-     * @throws InvalidArgumentException
+     * @return void The rendered page.
+     * @throws Exception If an error occurs while rendering the page.
+     * @throws InvalidArgumentException If an invalid argument is passed.
      */
     public function notFound(): void
     {

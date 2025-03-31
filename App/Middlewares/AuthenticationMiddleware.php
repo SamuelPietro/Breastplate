@@ -4,6 +4,9 @@ namespace Breastplate\App\Middlewares;
 
 use Breastplate\Src\Core\WebHelper;
 
+/**
+ * The authentication middleware class.
+ */
 class AuthenticationMiddleware
 {
     /**
@@ -24,7 +27,7 @@ class AuthenticationMiddleware
     /**
      * Handle an incoming request.
      *
-     * @return void
+     * @return void The response.
      */
     public function handle(): void
     {

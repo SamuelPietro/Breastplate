@@ -12,13 +12,16 @@ use PDOException;
 use Breastplate\Src\Database\Connection;
 use Breastplate\Src\Database\ConnectionInterface;
 
+/**
+ * The user model class.
+ */
 class UserModel implements CRUDInterface
 {
 
     /**
      * The dependency injection container.
      *
-     * @var Container
+     * @var Container $container
      */
     private Container $container;
 
@@ -31,8 +34,8 @@ class UserModel implements CRUDInterface
      * UserModel constructor.
      *
      * @param Container $container The dependency injection container.
-     * @throws DependencyException
-     * @throws NotFoundException
+     * @throws DependencyException If a dependency cannot be resolved
+     * @throws NotFoundException If a dependency is not found
      */
     public function __construct(Container $container)
     {
