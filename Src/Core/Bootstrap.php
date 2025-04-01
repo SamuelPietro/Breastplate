@@ -79,8 +79,8 @@ class Bootstrap
      */
     private function registerErrorHandler(): void
     {
-        $whoops = new Run;
-        $whoops->pushHandler(new PrettyPageHandler);
+        $whoops = new Run();
+        $whoops->pushHandler(new PrettyPageHandler());
         $whoops->register();
     }
 

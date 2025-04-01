@@ -20,7 +20,6 @@ use Breastplate\Src\Core\WebHelper;
  */
 class AuthController
 {
-
     /**
      * The dependency injection container.
      *

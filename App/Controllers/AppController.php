@@ -17,7 +17,6 @@ use Breastplate\Src\Core\WebHelper;
  */
 class AppController
 {
-
     /**
      * The dependency injection container.
      *
