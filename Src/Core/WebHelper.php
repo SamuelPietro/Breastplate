@@ -20,7 +20,7 @@ class WebHelper
      * @param array $data The data to be passed to the redirected page
      * @return void Redirects to the given URL
      */
-    #[NoReturn] public static function redirect(string $url, array $data = []): void
+    public static function redirect(string $url, array $data = []): void
     {
         self::setSession('redirect_data', $data, 3);
         header("Location: $url");
