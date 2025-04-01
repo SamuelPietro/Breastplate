@@ -17,7 +17,6 @@ use Breastplate\Src\Database\ConnectionInterface;
  */
 class UserModel implements CRUDInterface
 {
-
     /**
      * The dependency injection container.
      *
