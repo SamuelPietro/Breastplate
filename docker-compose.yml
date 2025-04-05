@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  php:
+    container_name: php
+    build:
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - .:/var/www/html
+      - ./public:/var/www/html/public
+    working_dir: /var/www/html/public
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - db
+    networks:
+      - pps_network
+    ports:
+      - "80:80"
+
+  db:
+    container_name: db
+    image: mariadb:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pps
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./resources/sql:/docker-entrypoint-initdb.d:ro
+    networks:
+      - pps_network
+
+volumes:
+  db_data:
+
+networks: # Rede de comunicação entre os containers
+  pps_network:
+    driver: bridge
