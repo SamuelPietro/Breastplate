@@ -16,7 +16,7 @@ services:
     depends_on:
       - db
     networks:
-      - pps_network
+      - breastplate_network
     ports:
       - "80:80"
 
@@ -27,16 +27,16 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: pps
+      MYSQL_DATABASE: breastplate
     volumes:
       - db_data:/var/lib/mysql
       - ./resources/sql:/docker-entrypoint-initdb.d:ro
     networks:
-      - pps_network
+      - breastplate_network
 
 volumes:
   db_data:
 
 networks: # Rede de comunicação entre os containers
-  pps_network:
+  breastplate_network:
     driver: bridge
