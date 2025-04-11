@@ -28,7 +28,7 @@ class Config
             'LANG' => 'en.UTF-8',
             'APP_LANGUAGE' => 'english',
             'BASE_URL' => $protocol . '://' . $host,
-            'DB_HOST' => 'localhost',
+            'DB_HOST' => 'db',
             'DB_NAME' => 'breastplate',
             'DB_USER' => 'root',
             'DB_PASS' => 'root',

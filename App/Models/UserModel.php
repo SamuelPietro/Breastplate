@@ -74,7 +74,8 @@ class UserModel implements CRUDInterface
             $query = $this->connection->connect()->prepare("SELECT * FROM user WHERE $field = :value");
             $query->bindParam(':value', $value);
             $query->execute();
-            return $query->fetch(PDO::FETCH_ASSOC);
+            $result = $query->fetch(PDO::FETCH_ASSOC);
+            return $result ?: null;
         } catch (PDOException $exception) {
             error_log(sprintf('Database error on getting user by %s: %s', $field, $exception->getMessage()));
             return [];

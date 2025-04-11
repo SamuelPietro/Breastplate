@@ -3,6 +3,7 @@
 namespace Breastplate\App\Controllers;
 
 use Breastplate\App\Models\UserModel;
+use Breastplate\Config\Config;
 use DI\Container;
 use DI\DependencyException;
 use DI\NotFoundException;
@@ -80,7 +81,6 @@ class AuthController
     {
         if ($this->webHelper->isMethod('post')) {
             $this->handlePostRequest();
-            return;
         }
 
         $error = $this->getError();
@@ -115,11 +115,6 @@ class AuthController
 
         $email = $this->webHelper->input('email', '', FILTER_VALIDATE_EMAIL);
         $password = $this->webHelper->input('password');
-
-        if (!WebHelper::validatePassword($password)) {
-            $this->setError('The provided data does not meet the minimum security requirements.');
-            return;
-        }
 
         $user = $this->userModel->getByField('email', $email);
         if ($user && password_verify($password, $user['password'])) {
@@ -278,11 +273,16 @@ class AuthController
      *
      * @param string $errorMessage The error message.
      *
-     * @return void
+     * @return void The error message.
+     * @throws Exception If the error message is not empty and the application is in debug mode.
      */
     private function setError(string $errorMessage): void
     {
         $this->error = $errorMessage;
+        $config = new Config();
+        if ($config->get()['DEBUG'] && !empty($errorMessage)) {
+            throw new Exception($errorMessage);
+        }
     }
 
     /**

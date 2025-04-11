@@ -28,6 +28,7 @@ try {
     $bootstrap->init();
 } catch (Exception $exception) {
     error_log('Error executing the application: ' . $exception->getMessage());
+    throw $exception;
 }
 
 /**

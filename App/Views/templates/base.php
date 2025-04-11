@@ -19,11 +19,11 @@
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico"/>
     <title><?= $config->get('APP_NAME') ?> | <?= $title ?? '' ?></title>
     <!-- Styles -->
+    <link rel="stylesheet" href="/css/app.css"/>
     <!-- Scripts -->
 
 </head>
 <body>
-<h1><?= $title ?? '' ?></h1>
 <?= $this->section('content') ?>
 </body>
 </html>
